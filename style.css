@@ -85,4 +85,121 @@ body {
 .nav-sidebar ul li a:hover {
 	background-color: #222;
 }
+
+.grid {
+	display: grid;	/*makes the container into a grid, that items will re-arrange a certain way*/
+	grid-template-columns: 1fr;
+	/*this grid template columns thing can be customized great!*/	
+	grid-template-rows:  1fr 1fr 1fr 1fr;
+	grid-template-areas: 
+	"title"
+	"header"
+	"content";
+	grid-gap: 0px;
+	margin-top: 60px;
+	margin-left: 60px;
+}
+.title {
+	grid-area: title;
+}
+.header {
+	grid-area: header;
+}
+.content {
+	grid-area: content;
+}
+
+.signup-form {
+	width: 400px;
+	margin: 0 auto;
+	padding-top: 30px;
 	
+}
+
+.signup-form input{
+	width: 90%;
+	height: 40px;
+	padding: 0px 5%;
+	margin-bottom: 4px;
+	border: none;
+	background-color: #fff;
+	line-height: 40px;
+	font-family: arial;
+	font-size: 16px;
+	color: #111;
+	line-height: 40px;
+}
+
+.signup-form button{
+	display: block;
+	margin: 0 auto;
+	width: 30%;
+	height: 40px;
+	border: none;
+	background-color: #222;
+	line-height: 40px;
+	font-family: arial;
+	font-size: 16px;
+	color: #fff;
+	line-height: 40px;
+}
+
+	
+ .nav-login {
+	position: absolute;  
+	right: 0px;
+	float: left;
+	z-index: -100;
+}
+
+ .nav-login a{
+	float: left;
+	height:30px;
+	padding-top: 15px;
+	margin: 10px;
+	text-transform: uppercase;
+	text-decoration: none;
+	color: #111;
+	font-family: arial;
+	font-size: 16px;
+}
+
+ .nav-login form {
+	float: left;
+	padding-top: 15px;
+}
+
+ .nav-login form input{
+	float: left;
+	width: 140px;
+	height: 30px;
+	padding: 0px 10px;
+	margin-right:10px;
+	border: none;
+	background-color: #ccc;
+	line-height: 30px;
+	font-family: arial;
+	font-size: 14px;
+	color: #111;
+	line-height: 30px;
+}
+
+
+ .nav-login form button{
+	float: left;
+	width: 80px;
+	height: 30px;
+	padding: 0px 10px;
+	margin-right:10px;
+	border: none;
+	background-color: #f3f3f3;
+	font-family: arial;
+	font-size: 14px;
+	color: #111;
+	cursor: poniter;
+}
+
+ .nav-login form button:hover{
+	background-color: #ccc;
+}
+
