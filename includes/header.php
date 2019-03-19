@@ -7,6 +7,7 @@ session_start();
 <meta charset="UTF-8">
 <meta name=viewport content="width=device-width, initial-scale=1">
 <title>Joffrey Ballet - SWAC</title>
+<script src="js/main.js"></script>
 <link rel="stylesheet" href="resetstyle.css">
 <link rel="stylesheet" href="style.css">
 

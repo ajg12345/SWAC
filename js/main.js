@@ -29,7 +29,7 @@ let toggleNav = function() {
 		
 		getSidebarUl.stylevisibility = "hidden";
 		toggleNavStatus = false;
-		console.log(toggleNavStatus);
+		
 		
 	}
 	
