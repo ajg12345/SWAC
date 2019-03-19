@@ -5,7 +5,7 @@ include_once "includes/header.php";
 
 <div class= "grid">
 	<div class="title"><h1>Welcome the Joffrey Ballet's Web Application for Casting! </h1></div>
-	<div class="header">
+	<div class="content">
 		<?php
 			if (isset($_SESSION['useruid']))  {
 				$uname = str_replace('@joffrey.org', '', $_SESSION['user_email']);
@@ -15,7 +15,6 @@ include_once "includes/header.php";
 			}
 		?>
 	</div>	
-	<div class="content">Content goes here</div>
 </div>	
 
 <?php
