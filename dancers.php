@@ -1,8 +1,5 @@
 <?php
 include_once "includes/header.php";
-if (!isset($_SESSION['useruid']) || $_SESSION['can_create'] == 0)  {
-	header("Location: index.php");
-}
 include_once "includes/crudheader.php";
 ?>
 

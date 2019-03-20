@@ -1,9 +1,6 @@
 <?php
 // Include config file
 require_once "includes/header.php";
-if (!isset($_SESSION['useruid']) || $_SESSION['can_create'] == 0)  {
-	header("Location: index.php");
-}
 require_once "includes/dbh.inc.php";
 // Define variables and initialize with empty values
 $dancer_first = $dancer_last = $dancer_email = "";

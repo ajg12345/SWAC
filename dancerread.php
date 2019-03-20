@@ -1,8 +1,5 @@
 <?php
 include_once "includes/header.php";
-if (!isset($_SESSION['useruid']) || $_SESSION['can_create'] == 0)  {
-	header("Location: index.php");
-}
 // Check existence of id parameter before processing further
 if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
     // Include config file

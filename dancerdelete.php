@@ -1,8 +1,5 @@
 <?php
 require_once "includes/header.php";
-if (!isset($_SESSION['useruid']) || $_SESSION['can_create'] == 0)  {
-	header("Location: index.php");
-}
 require_once "includes/dbh.inc.php";
 
 // Process delete operation after confirmation
@@ -50,7 +47,7 @@ include_once "includes/crudheader.php";
 	<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 		<div class="alert alert-danger fade in">
 			<input type="hidden" name="id" value="<?php echo trim($_GET["id"]); ?>"/>
-			<p>Are you sure you want to delete this record?</p><br>
+			<p>Are you sure you want to delete this dancer?</p><br>
 			<p>
 				<input type="submit" value="Yes" class="btn btn-danger">
 				<a href="dancers.php" class="btn btn-default">No</a>
