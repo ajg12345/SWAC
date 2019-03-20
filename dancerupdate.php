@@ -146,6 +146,9 @@ include_once "includes/crudheader.php";
 		</div>
 		<input type="hidden" name="id" value="<?php echo $id; ?>"/>
 		<input type="submit" class="btn btn-primary" value="Submit">
-		<a href="index.php" class="btn btn-default">Cancel</a>
+		<a href="dancers.php" class="btn btn-default">Cancel</a>
 	</form>
 </div>
+<?php
+include_once "includes/footer.php";
+?>

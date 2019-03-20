@@ -13,7 +13,7 @@ include_once "includes/crudheader.php";
             <div class="row">
                 <div class="col-md-12">
 					<div class="page-header clearfix">
-						<a href="create.php" class="btn btn-success pull-right">Add New Dancer</a>
+						<a href="dancercreate.php" class="btn btn-success pull-right">Add New Dancer</a>
 					</div>
 					<?php
 					include_once 'includes/dbh.inc.php';

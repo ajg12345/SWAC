@@ -71,6 +71,6 @@ include_once "includes/crudheader.php";
 			<label>Email Address</label>
 			<p class="form-control-static"><?php echo $dancer_email; ?></p>
 		</div>
-		<p><a href="index.php" class="btn btn-primary">Back</a></p>
+		<p><a href="dancers.php" class="btn btn-primary">Back</a></p>
 	</div>
 </div>
