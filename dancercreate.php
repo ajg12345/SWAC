@@ -12,7 +12,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 	
 	 // Validate email_or_phone
     $input_dancer_email_or_phone = trim($_POST["dancer_email_or_phone"]);
-    if($input_dancer_email_or_phone !== "email" OR $input_dancer_email_or_phone !== "phone"){
+    if((strcmp($input_dancer_email_or_phone, 'email') !== 0) AND (strcmp($input_dancer_email_or_phone, 'phone') !== 0)){
         $dancer_email_or_phone_err = 'Please enter the value "phone" or "email".';
     }else{
         $dancer_email_or_phone = $input_dancer_email_or_phone;
@@ -22,10 +22,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $input_dancer_full = trim($_POST["dancer_fullname"]);
     if(empty($input_dancer_full)){
         $dancer_first_err = "Please enter a full name.";
-    } elseif(!preg_match("/^[a-zA-Z]*$/", $input_dancer_full) || !preg_match("/^[a-zA-Z]*$/", $input_dancer_full)){
+    } elseif(preg_match('~[0-9]~', $input_dancer_full)){
         $dancer_fullname_err = "Please enter a valid full name."; 
     } else{
-        $dancer_full = $input_dancer_full;
+        $dancer_fullname = $input_dancer_full;
     }
 	
     // Validate phone
@@ -51,10 +51,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
          
         if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "ssss", $param_full, $param_phone, $param_email, $param_email_or_phone);
+            mysqli_stmt_bind_param($stmt, "ssss", $param_fullname, $param_phone, $param_email, $param_email_or_phone);
             
             // Set parameters
-            $param_full = $dancer_fullname;
+            $param_fullname = $dancer_fullname;
             $param_phone = $dancer_phone;
             $param_email = $dancer_email;
 			$param_email_or_phone = $dancer_email_or_phone;
@@ -80,9 +80,9 @@ include_once "includes/crudheader.php";
 ?>
  
 <div class="grid">
-    
-    <div class="title">Create Dancer</div>
-    
+    <div class="Title">
+		<h2>Create Dancer</h2>
+	</div>
     <div class="content">
 		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 			<div class="form-group <?php echo (!empty($dancer_fullname_err)) ? 'has-error' : ''; ?>">
@@ -92,7 +92,7 @@ include_once "includes/crudheader.php";
 			</div>
 			<div class="form-group <?php echo (!empty($dancer_phone_err)) ? 'has-error' : ''; ?>">
 				<label>Contact Phone</label>
-				<textarea name="dancer_phone" class="form-control"><?php echo $dancer_phone; ?></textarea>
+				<input type="text" name="dancer_phone" class="form-control" value="<?php echo $dancer_phone; ?>">
 				<span class="help-block"><?php echo $dancer_phone_err;?></span>
 			</div>
 			<div class="form-group <?php echo (!empty($dancer_email_err)) ? 'has-error' : ''; ?>">
