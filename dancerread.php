@@ -1,19 +1,19 @@
 <?php
 include_once "includes/header.php";
-// Check existence of id parameter before processing further
-if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
+// Check existence of dancer_id parameter before processing further
+if(isset($_GET["dancer_id"]) && !empty(trim($_GET["dancer_id"]))){
     // Include config file
     require_once "includes/dbh.inc.php";
     
     // Prepare a select statement
-    $sql = "SELECT * FROM dancers WHERE id = ?";
+    $sql = "SELECT * FROM dancers WHERE dancer_id = ?";
     
     if($stmt = mysqli_prepare($conn, $sql)){
         // Bind variables to the prepared statement as parameters
         mysqli_stmt_bind_param($stmt, "i", $param_id);
         
         // Set parameters
-        $param_id = trim($_GET["id"]);
+        $param_id = trim($_GET["dancer_id"]);
         
         // Attempt to execute the prepared statement
         if(mysqli_stmt_execute($stmt)){
@@ -24,11 +24,12 @@ if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
                 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
                 
                 // Retrieve individual field value
-                $dancer_first = $row["dancer_first"];
-                $dancer_last = $row["dancer_last"];
+                $dancer_fullname = $row["dancer_fullname"];
+                $dancer_phone = $row["dancer_phone"];
                 $dancer_email = $row["dancer_email"];
+				$dancer_email_or_phone = $row["dancer_email_or_phone"];
             } else{
-                // URL doesn't contain valid id parameter. Redirect to error page
+                // URL doesn't contain valid dancer_id parameter. Redirect to error page
                 header("location: error.php");
                 exit();
             }
@@ -44,7 +45,7 @@ if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
     // Close connection
     mysqli_close($conn);
 } else{
-    // URL doesn't contain id parameter. Redirect to error page
+    // URL doesn't contain dancer_id parameter. Redirect to error page
     header("location: error.php");
     exit();
 }
@@ -57,16 +58,20 @@ include_once "includes/crudheader.php";
 	</div>
 	<div class="content"> 
 		<div class="form-group">
-			<label>First Name</label>
-			<p class="form-control-static"><?php echo $dancer_first; ?></p>
+			<label>Full Name</label>
+			<p class="form-control-static"><?php echo $dancer_fullname; ?></p>
 		</div>
 		<div class="form-group">
-			<label>Last Name</label>
-			<p class="form-control-static"><?php echo $dancer_last; ?></p>
+			<label>Contact Phone Number</label>
+			<p class="form-control-static"><?php echo $dancer_phone; ?></p>
 		</div>
 		<div class="form-group">
-			<label>Email Address</label>
+			<label>Contact Email Address</label>
 			<p class="form-control-static"><?php echo $dancer_email; ?></p>
+		</div>
+		<div class="form-group">
+			<label>Preferred Contact Method</label>
+			<p class="form-control-static"><?php echo $dancer_email_or_phone; ?></p>
 		</div>
 		<p><a href="dancers.php" class="btn btn-primary">Back</a></p>
 	</div>

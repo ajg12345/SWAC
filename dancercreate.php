@@ -3,52 +3,61 @@
 require_once "includes/header.php";
 require_once "includes/dbh.inc.php";
 // Define variables and initialize with empty values
-$dancer_first = $dancer_last = $dancer_email = "";
-$dancer_first_err = $dancer_last_err = $dancer_email_err = "";
+$dancer_email_or_phone = "";
+$dancer_fullname = $dancer_phone = $dancer_email =  "";
+$dancer_fullname_err = $dancer_phone_err = $dancer_email_err = $dancer_email_or_phone_err = "";
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
-    // Validate first namename
-    $input_dancer_first = trim($_POST["dancer_first"]);
-    if(empty($input_dancer_first)){
-        $dancer_first_err = "Please enter a first name.";
-    } elseif(!preg_match("/^[a-zA-Z]*$/", $input_dancer_first) || !preg_match("/^[a-zA-Z]*$/", $input_dancer_first)){
-        $dancer_first_err = "Please enter a valid first name."; 
+	
+	 // Validate email_or_phone
+    $input_dancer_email_or_phone = trim($_POST["dancer_email_or_phone"]);
+    if($input_dancer_email_or_phone !== "email" OR $input_dancer_email_or_phone !== "phone"){
+        $dancer_email_or_phone_err = 'Please enter the value "phone" or "email".';
+    }else{
+        $dancer_email_or_phone = $input_dancer_email_or_phone;
+	}
+	
+    // Validate fullname
+    $input_dancer_full = trim($_POST["dancer_fullname"]);
+    if(empty($input_dancer_full)){
+        $dancer_first_err = "Please enter a full name.";
+    } elseif(!preg_match("/^[a-zA-Z]*$/", $input_dancer_full) || !preg_match("/^[a-zA-Z]*$/", $input_dancer_full)){
+        $dancer_fullname_err = "Please enter a valid full name."; 
     } else{
-        $dancer_first = $input_dancer_first;
+        $dancer_full = $input_dancer_full;
     }
-    
-    // Validate last name
-    $input_dancer_last = trim($_POST["dancer_last"]);
-    if(empty($input_dancer_last)){
-        $dancer_last_err = "Please enter an last name.";     
+	
+    // Validate phone
+    $input_dancer_phone = trim($_POST["dancer_phone"]);
+    if(!preg_match('~[0-9]~', $input_dancer_phone)){
+        $dancer_phone_err = "Please enter a phone number that contains numbers.";
     } else{
-        $dancer_last = $input_dancer_last;
+        $dancer_phone = $input_dancer_phone;
     }
-    
+	
     // Validate email
     $input_dancer_email = trim($_POST["dancer_email"]);
-    if(empty($input_dancer_email)){
-        $dancer_email_err = "Please enter the email.";     
-    } elseif(!strpos($input_dancer_email, '@')){
+    if(!strpos($input_dancer_email, '@')){
         $dancer_email_err = "Please enter a valid email.";
     } else{
         $dancer_email = $input_dancer_email;
     }
     
     // Check input errors before inserting in database
-    if(empty($dancer_first_err) && empty($dancer_last_err) && empty($dancer_email_err)){
+    if(empty($dancer_fullname_err) && empty($dancer_email_err) && empty($dancer_email_or_phone_err) && empty($dancer_phone_err)){
         // Prepare an insert statement
-        $sql = "INSERT INTO dancers (dancer_first, dancer_last, dancer_email) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO dancers(dancer_fullname, dancer_phone, dancer_email, dancer_email_or_phone) VALUES (?, ?, ?, ?)";
          
         if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "sss", $param_first, $param_last, $param_email);
+            mysqli_stmt_bind_param($stmt, "ssss", $param_full, $param_phone, $param_email, $param_email_or_phone);
             
             // Set parameters
-            $param_first = $dancer_first;
-            $param_last = $dancer_last;
+            $param_full = $dancer_fullname;
+            $param_phone = $dancer_phone;
             $param_email = $dancer_email;
+			$param_email_or_phone = $dancer_email_or_phone;
             
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
@@ -76,20 +85,25 @@ include_once "includes/crudheader.php";
     
     <div class="content">
 		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-			<div class="form-group <?php echo (!empty($dancer_first_err)) ? 'has-error' : ''; ?>">
-				<label>First Name</label>
-				<input type="text" name="dancer_first" class="form-control" value="<?php echo $dancer_first; ?>">
-				<span class="help-block"><?php echo $dancer_first_err;?></span>
+			<div class="form-group <?php echo (!empty($dancer_fullname_err)) ? 'has-error' : ''; ?>">
+				<label>Full Name</label>
+				<input type="text" name="dancer_fullname" class="form-control" value="<?php echo $dancer_fullname; ?>">
+				<span class="help-block"><?php echo $dancer_fullname_err;?></span>
 			</div>
-			<div class="form-group <?php echo (!empty($dancer_last_err)) ? 'has-error' : ''; ?>">
-				<label>Last Name</label>
-				<textarea name="dancer_last" class="form-control"><?php echo $dancer_last; ?></textarea>
-				<span class="help-block"><?php echo $dancer_last_err;?></span>
+			<div class="form-group <?php echo (!empty($dancer_phone_err)) ? 'has-error' : ''; ?>">
+				<label>Contact Phone</label>
+				<textarea name="dancer_phone" class="form-control"><?php echo $dancer_phone; ?></textarea>
+				<span class="help-block"><?php echo $dancer_phone_err;?></span>
 			</div>
 			<div class="form-group <?php echo (!empty($dancer_email_err)) ? 'has-error' : ''; ?>">
-				<label>Email Address</label>
+				<label>Contact Email Address</label>
 				<input type="text" name="dancer_email" class="form-control" value="<?php echo $dancer_email; ?>">
 				<span class="help-block"><?php echo $dancer_email_err;?></span>
+			</div>
+			<div class="form-group <?php echo (!empty($dancer_email_or_phone_err)) ? 'has-error' : ''; ?>">
+				<label>Preferred Contact Method</label>
+				<input type="text" name="dancer_email_or_phone" class="form-control" value="<?php echo $dancer_email_or_phone; ?>">
+				<span class="help-block"><?php echo $dancer_email_or_phone_err;?></span>
 			</div>
 			<input type="submit" class="btn btn-primary" value="Submit">
 			<a href="dancers.php" class="btn btn-default">Cancel</a>

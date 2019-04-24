@@ -29,9 +29,9 @@
 				echo '<input type="text" name="uid" placeholder="username"><br>';
 			}
 		?>
-		<input type="text" name="pwd" placeholder="password">
+		<input type="password" name="pwd" placeholder="password">
 		<br>
-		<input type="text" name="pwd2" placeholder="password repeated">
+		<input type="password" name="pwd2" placeholder="password repeated">
 		<br>
 		<button type="submit" name="submit"> Sign up </button>
 		<?php
