@@ -52,6 +52,7 @@ session_start();
 			<li><a href="#">rehearsals</a></li>
 			<li><a href="#">roles</a></li>
 			<li><a href="#">role conflicts</a></li>
+			<li><a href="locations.php">locations</a></li>
 			<li><a href="#">notification templates</a></li>';
 			}
 			?>

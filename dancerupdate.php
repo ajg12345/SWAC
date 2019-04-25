@@ -41,14 +41,14 @@ if(isset($_POST["dancer_id"]) && !empty($_POST["dancer_id"])){
     }
 	
 	$input_dancer_email_or_phone = trim($_POST["dancer_email_or_phone"]);
-    if($input_dancer_email_or_phone !== "email" OR $input_dancer_email_or_phone !== "phone"){
+    if((strcmp($input_dancer_email_or_phone,"email") !== 0) AND (strcmp($input_dancer_email_or_phone, "phone") !== 0)){
         $dancer_email_or_phone_err = 'Please enter the value "phone" or "email".';
     }else{
         $dancer_email_or_phone = $input_dancer_email_or_phone;
 	}
     
     // Check input errors before inserting in database
-    if(empty($dancer_full) && empty($dancer_phone) && empty($dancer_email) && empty($dancer_email_or_phone)){
+    if(empty($dancer_fullname_err) && empty($dancer_phone_err) && empty($dancer_email_err) && empty($dancer_email_or_phone_err)){
         // Prepare an update statement
         $sql = "UPDATE dancers SET dancer_fullname=?, dancer_phone=?, dancer_email=?, dancer_email_or_phone=? WHERE dancer_id=?";
          
@@ -66,17 +66,17 @@ if(isset($_POST["dancer_id"]) && !empty($_POST["dancer_id"])){
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
                 // Records updated successfully. Redirect to landing page
-                header("location: dancers.php");
+                header("location: dancers.php#itwassucessful");
                 exit();
             } else{
                 echo "Something went wrong. Please try again later.";
+				header("location: error.php#73");
             }
         }
          
         // Close statement
         mysqli_stmt_close($stmt);
     }
-    
     // Close connection
     mysqli_close($conn);
 } else{
@@ -109,7 +109,7 @@ if(isset($_POST["dancer_id"]) && !empty($_POST["dancer_id"])){
 					$dancer_email_or_phone = $row["dancer_email_or_phone"];
                 } else{
                     // URL doesn't contain valid id. Redirect to error page
-                    header("location: error.php");
+                    header("location: error.php#112");
                     exit();
                 }
                 
@@ -125,7 +125,7 @@ if(isset($_POST["dancer_id"]) && !empty($_POST["dancer_id"])){
         mysqli_close($conn);
     }  else{
         // URL doesn't contain id parameter. Redirect to error page
-        header("location: error.php");
+        header("location: error.php#128");
         exit();
     }
 }
@@ -136,7 +136,7 @@ include_once "includes/crudheader.php";
 		<h2>Update Dancer Record</h2>
 	</div>
 	<p>Please edit the input values and submit to update the record.</p>
-	<form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="post">
+	<form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="POST"> 
 		<div class="form-group <?php echo (!empty($dancer_fullname_err)) ? 'has-error' : ''; ?>">
 			<label>Full Name</label>
 			<input type="text" name="dancer_fullname" class="form-control" value="<?php echo $dancer_fullname; ?>">
@@ -157,8 +157,8 @@ include_once "includes/crudheader.php";
 			<input type="text" name="dancer_email_or_phone" class="form-control" value="<?php echo $dancer_email_or_phone; ?>">
 			<span class="help-block"><?php echo $dancer_email_or_phone_err;?></span>
 		</div>
-		<input type="hidden" name="id" value="<?php echo $dancer_id; ?>"/>
-		<input type="submit" class="btn btn-primary" value="Submit">
+		<input type="hidden" name="dancer_id" value="<?php echo $dancer_id; ?>"/>
+		<input name="submit" type="submit" class="btn btn-primary" value="Submit">
 		<a href="dancers.php" class="btn btn-default">Cancel</a>
 	</form>
 </div>
