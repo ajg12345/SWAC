@@ -49,6 +49,7 @@ session_start();
 			if (isset($_SESSION['useruid']) && $_SESSION['can_create'] === 1)  {
 			echo '<li><a href="dancers.php">dancers</a></li>
 			<li><a href="#">performances</a></li>
+			<li><a href="productions.php">productions</a></li>
 			<li><a href="#">rehearsals</a></li>
 			<li><a href="#">roles</a></li>
 			<li><a href="#">role conflicts</a></li>
