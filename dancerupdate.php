@@ -154,7 +154,12 @@ include_once "includes/crudheader.php";
 		</div>
 		<div class="form-group <?php echo (!empty($dancer_email_or_phone_err)) ? 'has-error' : ''; ?>">
 			<label>Preferred Contact Method</label>
-			<input type="text" name="dancer_email_or_phone" class="form-control" value="<?php echo $dancer_email_or_phone; ?>">
+			<select name="dancer_email_or_phone" class="form-control">
+					<?php if (strcmp($dancer_email_or_phone,"phone") == 0) 
+						{echo '<option value="phone">phone</option><option value="email">email</option>';
+					}else {echo '<option value="email">email</option><option value="phone">phone</option>';}
+					?>
+				</select>
 			<span class="help-block"><?php echo $dancer_email_or_phone_err;?></span>
 		</div>
 		<input type="hidden" name="dancer_id" value="<?php echo $dancer_id; ?>"/>

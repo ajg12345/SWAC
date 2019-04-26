@@ -87,22 +87,25 @@ include_once "includes/crudheader.php";
 		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 			<div class="form-group <?php echo (!empty($dancer_fullname_err)) ? 'has-error' : ''; ?>">
 				<label>Full Name</label>
-				<input type="text" name="dancer_fullname" class="form-control" value="<?php echo $dancer_fullname; ?>">
+				<input type="text" name="dancer_fullname" class="form-control" >
 				<span class="help-block"><?php echo $dancer_fullname_err;?></span>
 			</div>
 			<div class="form-group <?php echo (!empty($dancer_phone_err)) ? 'has-error' : ''; ?>">
 				<label>Contact Phone</label>
-				<input type="text" name="dancer_phone" class="form-control" value="<?php echo $dancer_phone; ?>">
+				<input type="text" name="dancer_phone" class="form-control" >
 				<span class="help-block"><?php echo $dancer_phone_err;?></span>
 			</div>
 			<div class="form-group <?php echo (!empty($dancer_email_err)) ? 'has-error' : ''; ?>">
 				<label>Contact Email Address</label>
-				<input type="text" name="dancer_email" class="form-control" value="<?php echo $dancer_email; ?>">
+				<input type="text" name="dancer_email" class="form-control">
 				<span class="help-block"><?php echo $dancer_email_err;?></span>
 			</div>
 			<div class="form-group <?php echo (!empty($dancer_email_or_phone_err)) ? 'has-error' : ''; ?>">
 				<label>Preferred Contact Method</label>
-				<input type="text" name="dancer_email_or_phone" class="form-control" value="<?php echo $dancer_email_or_phone; ?>">
+				<select name="dancer_email_or_phone" class="form-control">
+					<option value="phone">phone</option>
+					<option value="email">email</option>
+				</select>
 				<span class="help-block"><?php echo $dancer_email_or_phone_err;?></span>
 			</div>
 			<input type="submit" class="btn btn-primary" value="Submit">
