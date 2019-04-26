@@ -52,6 +52,7 @@ include_once "includes/crudheader.php";
 <div class="grid">
     <div class="Title">
 		<h2>Create Production</h2>
+		<h3>please use a detailed description including year (e.g. 2019 Nutcracker)</h3>
 	</div>
     <div class="content">
 		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
