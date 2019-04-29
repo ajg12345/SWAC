@@ -4,12 +4,18 @@ require_once "includes/header.php";
 
 require_once "includes/dbh.inc.php";
 // Define variables and initialize with empty values
-$prod_id = 0;
+$prod_id = null;
 $prod_id_err = "";
 $perf_dt = $perf_dt_err = "";
-$location_id = 0;
+$location_id = null;
 $location_id_err = "";
 $start_time = $start_time_err = $end_time = $end_time_err = "";
+
+//gather all options for selecting a new production
+$sql_loc_list = "select building, room, location_id from locations order by building, room;";
+$loc_list = mysqli_query($conn, $sql_loc_list);
+$sql_prod_list = "select description as production, prod_id, create_dt from productions order by create_dt;";
+$prod_list = mysqli_query($conn, $sql_prod_list);
 
 // Processing form data when form is submitted
 if(isset($_POST["re_id"]) && !empty($_POST["re_id"])){
@@ -93,7 +99,7 @@ if(isset($_POST["re_id"]) && !empty($_POST["re_id"])){
     if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
         // Get URL parameter
         $re_id =  trim($_GET["re_id"]);
-        
+		
         // Prepare a select statement
         $sql = "SELECT * FROM rehearsals WHERE re_id = ?";
         if($stmt = mysqli_prepare($conn, $sql)){
@@ -117,6 +123,11 @@ if(isset($_POST["re_id"]) && !empty($_POST["re_id"])){
                     $perf_dt = $row["perf_dt"];
                     $start_time = $row["start_time"];
 					$end_time = $row["end_time"];
+					
+					$sql_current_loc = "select building, room, location_id from locations where location_id = " . $location_id . ";";
+					$current_loc = mysqli_query($conn, $sql_current_loc);
+					$sql_current_prod = "select description as production, prod_id from productions where prod_id = " . $prod_id . ";";
+					$current_prod = mysqli_query($conn, $sql_current_prod);
 					
                 } else{
                     // URL doesn't contain valid id. Redirect to error page
@@ -147,37 +158,54 @@ include_once "includes/crudheader.php";
 		<h2>Update Performance</h2>
 	</div>
 	<p>Please edit the input values and submit to update the record.</p>
-	<form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="POST"> 
-		<div class="form-group <?php echo (!empty($prod_id_err)) ? 'has-error' : ''; ?>">
+	<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+			<div class="form-group <?php echo (!empty($prod_id_err)) ? 'has-error' : ''; ?>">
 				<label>Production</label>
-				<input type="text" name="prod_id" class="form-control" value="<?php echo $prod_id; ?>">
+				<select name="prod_id" class="form-control">
+					<?php 
+					$current_prod_row = mysqli_fetch_array($current_prod);
+					echo '<option value="' . $current_prod_row['prod_id'] . '">' . $current_prod_row['production'] . '</option>';
+					while($prod_row = mysqli_fetch_array($prod_list)){
+						echo '<option value="' . $prod_row['prod_id'] . '">' . $prod_row['production'] . '</option>';
+					}
+					?>
+				</select>
 				<span class="help-block"><?php echo $prod_id_err;?></span>
 			</div>
 			<div class="form-group <?php echo (!empty($location_id_err)) ? 'has-error' : ''; ?>">
 				<label>Location</label>
-				<input type="text" name="location_id" class="form-control" value="<?php echo $location_id; ?>">
+				<select name="location_id" class="form-control">
+					<?php 
+					$current_loc_row = mysqli_fetch_array($current_loc);
+					echo '<option value="' . $current_loc_row['location_id'] . '">' . $current_loc_row['building'] . ' - ' . $current_loc_row['room'] .'</option>';
+					while($loc_row = mysqli_fetch_array($loc_list)){
+						echo '<option value="' . $loc_row['location_id'] . '">' . $loc_row['building'] . ' - ' . $loc_row['room'] .'</option>';
+					}
+					?>
+				</select>
 				<span class="help-block"><?php echo $location_id_err;?></span>
 			</div>
 			<div class="form-group <?php echo (!empty($perf_dt_err)) ? 'has-error' : ''; ?>">
 				<label>Performance Date</label>
-				<input type="text" name="perf_dt" class="form-control" value="<?php echo $perf_dt; ?>">
+				<input type="date" name="perf_dt" class="form-control" value="<?php echo $perf_dt; ?>">
 				<span class="help-block"><?php echo $perf_dt_err;?></span>
 			</div>
 			<div class="form-group <?php echo (!empty($start_time_err)) ? 'has-error' : ''; ?>">
 				<label>Start Time</label>
-				<input type="text" name="start_time" class="form-control" value="<?php echo $start_time; ?>">
+				<input type="time" name="start_time" class="form-control" value="<?php echo $start_time; ?>">
 				<span class="help-block"><?php echo $start_time_err;?></span>
 			</div>
 			<div class="form-group <?php echo (!empty($end_time_err)) ? 'has-error' : ''; ?>">
 				<label>End Time</label>
-				<input type="text" name="end_time" class="form-control" value="<?php echo $end_time; ?>">
+				<input type="time" name="end_time" class="form-control" value="<?php echo $end_time; ?>" >
 				<span class="help-block"><?php echo $end_time_err;?></span>
 			</div>
-		<input type="hidden" name="re_id" value="<?php echo $re_id; ?>"/>
-		<input name="submit" type="submit" class="btn btn-primary" value="Submit">
-		<a href="performances.php" class="btn btn-default">Cancel</a>
-	</form>
+			<input type="submit" class="btn btn-primary" value="Submit">
+			<a href="performances.php" class="btn btn-default">Cancel</a>
+		</form>	
 </div>
 <?php
+mysqli_free_result($prod_list);	
+mysqli_free_result($loc_list);
 include_once "includes/footer.php";
 ?>
