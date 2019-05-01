@@ -5,6 +5,8 @@ include_once 'includes/dbh.inc.php';
 //get casting labels lke location, time, prod etc.
 $building = "";
 $production = "";
+$prod_id = "";
+$re_id = "";
 $room = "";
 $perf_dt = "";
 $start_time = "";
@@ -20,6 +22,7 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 				loc.building as building, 
 				loc.room as room, 
 				pro.description as production, 
+				pro.prod_id as prod_id,
 				re.perf_dt as perf_dt, 
 				re.start_time as start_time, 
 				re.end_time as end_time 
@@ -32,6 +35,7 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 		while($row = mysqli_fetch_array($result)){
 			$building = $row['building'];
 			$production = $row['production'];
+			$prod_id = $row['prod_id'];
 			$room = $row['room'];
 			$perf_dt = $row['perf_dt'];
 			$start_time = $row['start_time'];
@@ -52,7 +56,7 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
             <div class="row">
                 <div class="col-md-12">
 					<div class="page-header clearfix">
-						<a href="castingcreate.php" class="btn btn-success pull-right">Cast Additional Role</a>
+						<?php echo '<a href="castingcreate.php?re_id='. $re_id .'" class="btn btn-success pull-right">Cast Additional Role</a>' ?>
 					</div>
 					<?php
 					
@@ -64,6 +68,7 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 						$sql = "SELECT  
 								c.casting_id,
 								p.description as production,
+								p.prod_id as prod_id,
 								r.description as role,
 								d.dancer_fullname as dancer
 								FROM castings as c 
@@ -101,7 +106,7 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 								// Free result set
 								mysqli_free_result($result);
 							} else{
-								echo "<p class='lead'><em>No records were found.</em></p>";
+								echo "<p class='lead'><em>No casting was found.</em></p>";
 							}
 						} else{
 							echo "ERROR: Could not able to execute $sql. " . mysqli_error($conn);

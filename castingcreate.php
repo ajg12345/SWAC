@@ -5,78 +5,116 @@ require_once "includes/dbh.inc.php";
 // Define variables and initialize with empty values
 //this will get a prod_id, perf_dt, location_id, start_time, and end_time
 $prod_id = null;
-$prod_id_err = "";
-$perf_dt = $perf_dt_err = "";
-$location_id = null;
-$location_id_err = "";
-$start_time = $start_time_err = $end_time = $end_time_err = "";
+$re_id = null;
+$building = "";
+$production = "";
+$room = "";
+$perf_dt = "";
+$start_time = "";
+$end_time = "";
+$type = "Rehearsal";
+$input_dancer_err = "";
+$input_role_err = "";
 
-//gather all options for selecting a new production
-$sql_loc_list = "select building, room, location_id from locations order by building, room;";
-$loc_list = mysqli_query($conn, $sql_loc_list);
-$sql_prod_list = "select description as production, prod_id, create_dt from productions order by create_dt;";
-$prod_list = mysqli_query($conn, $sql_prod_list);
+if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
+	// Get URL parameter
+	$re_id =  trim($_GET["re_id"]);					
+	
+	$sql = "SELECT  re.re_id as re_id,
+				re.is_performance as is_performance,
+				loc.building as building, 
+				loc.room as room, 
+				pro.description as production, 
+				pro.prod_id as prod_id,
+				re.perf_dt as perf_dt, 
+				re.start_time as start_time, 
+				re.end_time as end_time 
+				FROM rehearsals as re
+				join productions as pro on re.prod_id = pro.prod_id
+				join locations as loc on re.location_id = loc.location_id
+				where re.re_id = " . $re_id . ";";
+				
+	if($result = mysqli_query($conn, $sql)){
+		while($row = mysqli_fetch_array($result)){
+			$building = $row['building'];
+			$production = $row['production'];
+			$prod_id = $row['prod_id'];
+			$room = $row['room'];
+			$perf_dt = $row['perf_dt'];
+			$start_time = $row['start_time'];
+			$end_time = $row['end_time'];
+			if ($row['is_performance'] == 1){$type = "Performance";}
+		}
+	}
+}
+
+//gather all options for selecting a new casting
+$sql_dancer_list = "select dancer_fullname, dancer_id from dancers order by dancer_fullname desc;";
+$dancer_list = mysqli_query($conn, $sql_dancer_list);
+$sql_role_list = "select role_id, description from roles where prod_id = ". $prod_id . " order by description desc;";
+$role_list = mysqli_query($conn, $sql_role_list);
+
+$input_dancer_id = null;
+$dancer_id = null;
+$input_role_id = null;
+$role_id = null;
+$input_conflict_err = "";	//an explanation regarding possible role-conflicts
+
 
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 	
-	 // Validate production_id
-    $input_prod_id = trim($_POST["prod_id"]);
-    if(empty($input_prod_id)){
-        $prod_id_err = 'Please select a production.';
-    }else{
-        $prod_id = $input_prod_id;
+	// Validate role does not conflict with dancer choice ONLY FOR PERFORMANCES, not rehearsals
+    $input_dancer_id = trim($_POST["dancer_id"]);
+	$input_role_id = trim($_POST["role_id"]);
+	$input_re_id = trim($_POST["re_id"]);
+	
+	$sql_conflict_list ="select r1.description as role1,
+								r2.description as role2
+								from castings as c
+								join role_conflicts as rc on c.role_id = rc.role_id1 or c.role_id = rc.role_id2
+								join roles as r1 on rc.role_id1 = r1.role_id
+								join roles as r2 on rc.role_id2 = r2.role_id
+								where c.re_id=". $input_re_id ."
+								and c.dancer_id=". $input_dancer_id ."
+								and (	(rc.role_id1 = c.role_id and rc.role_id2 =". $input_role_id .") 
+									or  (rc.role_id2 = c.role_id and rc.role_id1 =". $input_role_id ."));";
+	//select r1.description as role1, r2.description as role2 
+	//from castings as c join role_conflicts as rc on c.role_id = rc.role_id1 or c.role_id = rc.role_id2 
+	//join roles as r1 on rc.role_id1 = r1.role_id join roles as r2 on rc.role_id2 = r2.role_id 
+	//where c.re_id=2 and c.dancer_id=1 and ( (rc.role_id1 = c.role_id and rc.role_id2 =1) or (rc.role_id2 = c.role_id and rc.role_id1 =2))
+								 
+	$conflict_list = mysqli_query($conn, $sql_conflict_list);
+	
+    if(empty($input_dancer_id) || empty($input_role_id)){
+        $input_dancer_err = 'Please select a dancer and role to cast.';
+		$input_role_err = 'Please select a dancer and role to cast.';
+    }elseif((strcmp($type,"Rehearsal") <> 0)){	//a performnace, so apply the conflict rules
+		while($conflict_row = mysqli_fetch_array($conflict_list)){
+			$input_dancer_err = 'This dancer cannot dance both ' . $conflict_row['role1'] .' and '. $conflict_row['role2'] . ' in this production.';
+			$input_role_err = 'This dancer cannot dance both ' . $conflict_row['role1'] .' and '. $conflict_row['role2'] . ' in this production.';
+		}
+	}else{
+        $dancer_id = $input_dancer_id;
+		$role_id = $input_role_id;
 	}
-	
-	// Validate location_id
-    $input_location_id = trim($_POST["location_id"]);
-    if(empty($input_location_id)){
-        $location_id_err = 'Please select a location.';
-    }else{
-        $location_id = $input_location_id;
-	}
-	
-    // Validate perf_dt
-    $input_perf_dt = trim($_POST["perf_dt"]);
-    if(empty($input_perf_dt)){
-        $perf_dt_err = "Please select a performance date.";
-    } else{
-        $perf_dt = $input_perf_dt;
-    }
-	
-    // Validate start_time
-    $input_start_time = trim($_POST["start_time"]);
-    if(empty($input_start_time)){
-        $start_time_err = "Please enter a start time";
-    } else{
-        $start_time = $input_start_time;
-    }
-	
-    // Validate start_time
-    $input_end_time = trim($_POST["end_time"]);
-    if(empty($input_end_time)){
-        $end_time_err = "Please enter a end time";
-    } else{
-        $end_time = $input_end_time;
-    }
 	
     // Check input errors before inserting in database
-    if(empty($prod_id_err) && empty($perf_dt_err) && empty($location_id_err) && empty($start_time_err) && empty($end_time_err)){
+    if(empty($input_dancer_err) && empty($input_role_err)){
         // Prepare an insert statement
-        $sql = "INSERT INTO rehearsals(is_performance, prod_id, location_id, perf_dt, start_time, end_time) VALUES (0, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO castings(dancer_id, role_id, re_id) VALUES (?, ?, ?)";
         if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "iisss", $param_prod_id, $param_location_id, $param_perf_dt, $param_start_time, $param_end_time);
+            mysqli_stmt_bind_param($stmt, "iii", $param_dancer_id, $param_role_id, $param_re_id);
             // Set parameters
-            $param_prod_id = $prod_id;
-            $param_location_id = $location_id;
-            $param_perf_dt = $perf_dt;
-			$param_start_time = $start_time;
-			$param_end_time = $end_time;
+            $param_dancer_id = $dancer_id;
+            $param_role_id = $role_id;
+            $param_re_id = $input_re_id;
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
                 // Records created successfully. Redirect to landing page
-                header("location: rehearsals.php");
+				$landing_page = "location: castings.php?re_id=" . $param_re_id;
+                header($landing_page);
                 exit();
             } else{
                 echo "Something went wrong. Please try again later.";
@@ -92,55 +130,42 @@ include_once "includes/crudheader.php";
 ?>
 <div class="grid">
     <div class="Title">
-		<h2>Create Rehearsal</h2>
+		<?php echo "<h1>Create ".$type." Casting</h1>"; ?>
+		<?php echo "<h2>".$production." on ".$perf_dt." from ".$start_time." to ".$end_time."</h2>"; ?>
 	</div>
     <div class="content">
 		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-			<div class="form-group <?php echo (!empty($prod_id_err)) ? 'has-error' : ''; ?>">
-				<label>Production</label>
-				<select name="prod_id" class="form-control">
+			<div class="form-group <?php echo (!empty($input_dancer_err)) ? 'has-error' : ''; ?>">
+				<label>Dancer</label>
+				<select name="dancer_id" class="form-control">
 					<?php 
-					while($prod_row = mysqli_fetch_array($prod_list)){
-						echo '<option value="' . $prod_row['prod_id'] . '">' . $prod_row['production'] . '</option>';
+					while($dancer_row = mysqli_fetch_array($dancer_list)){
+						echo '<option value="' . $dancer_row['dancer_id'] . '">' . $dancer_row['dancer_fullname'] . '</option>';
 					}
 					?>
 				</select>
-				<span class="help-block"><?php echo $prod_id_err;?></span>
+				<span class="help-block"><?php echo $input_dancer_err;?></span>
 			</div>
-			<div class="form-group <?php echo (!empty($location_id_err)) ? 'has-error' : ''; ?>">
-				<label>Location</label>
-				<select name="location_id" class="form-control">
+			<div class="form-group <?php echo (!empty($input_role_err)) ? 'has-error' : ''; ?>">
+				<label>Role</label>
+				<select name="role_id" class="form-control">
 					<?php 
-					while($loc_row = mysqli_fetch_array($loc_list)){
-						echo '<option value="' . $loc_row['location_id'] . '">' . $loc_row['building'] . ' - ' . $loc_row['room'] .'</option>';
+					while($role_row = mysqli_fetch_array($role_list)){
+						echo '<option value="' . $role_row['role_id'] . '">' . $role_row['description'] .'</option>';
 					}
 					?>
 				</select>
-				<span class="help-block"><?php echo $location_id_err;?></span>
+				<span class="help-block"><?php echo $input_role_err;?></span>
 			</div>
-			<div class="form-group <?php echo (!empty($perf_dt_err)) ? 'has-error' : ''; ?>">
-				<label>Performance Date</label>
-				<input type="date" name="perf_dt" class="form-control" >
-				<span class="help-block"><?php echo $perf_dt_err;?></span>
-			</div>
-			<div class="form-group <?php echo (!empty($start_time_err)) ? 'has-error' : ''; ?>">
-				<label>Start Time</label>
-				<input type="time" name="start_time" class="form-control" >
-				<span class="help-block"><?php echo $start_time_err;?></span>
-			</div>
-			<div class="form-group <?php echo (!empty($end_time_err)) ? 'has-error' : ''; ?>">
-				<label>End Time</label>
-				<input type="time" name="end_time" class="form-control" >
-				<span class="help-block"><?php echo $end_time_err;?></span>
-			</div>
+			<input type="hidden" name="re_id" value="<?php echo $re_id ?>">
 			<input type="submit" class="btn btn-primary" value="Submit">
-			<a href="rehearsals.php" class="btn btn-default">Cancel</a>
+			<a href="castings.php" class="btn btn-default">Cancel</a>
 		</form>
     </div>
 </div>
 <?php
 //free memory assoc with prod and locs
-mysqli_free_result($prod_list);	
-mysqli_free_result($loc_list);
+mysqli_free_result($dancer_list);	
+mysqli_free_result($role_list);
 include_once "includes/footer.php";
 ?>
