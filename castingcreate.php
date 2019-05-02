@@ -61,22 +61,23 @@ $sql_role_list = "select role_id, description from roles where prod_id = ". $pro
 $role_list = mysqli_query($conn, $sql_role_list);
 
 
-$input_dancer_id = null;
-$dancer_id = null;
-$input_role_id = null;
-$role_id = null;
+$input_dancer_id = "";
+$dancer_id = "";
+$input_role_id = "";
+$role_id = "";
 
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 	$re_id =  trim($_POST["re_id"]);					
 	
-	$sql = "SELECT  re.is_performance as is_performance FROM rehearsals as re where re.re_id = " . $re_id . ";";
+	$sql_perf_check = "SELECT  re.is_performance as is_performance FROM rehearsals as re where re.re_id = " . $re_id . ";";
 	
-	if($result = mysqli_query($conn, $sql)){
-		while($row = mysqli_fetch_array($result)){
-			if ($row['is_performance'] == 1){$type = "Performance";}
+	if($perf_check_list = mysqli_query($conn, $sql_perf_check)){
+		while($row_perf_check = mysqli_fetch_array($perf_check_list)){
+			if ($row_perf_check['is_performance'] == 1){$type = "Performance";}
 		}
 	}
+	mysqli_free_result($perf_check_list);
 	
 	// Validate role does not conflict with dancer choice ONLY FOR PERFORMANCES, not rehearsals
     $input_dancer_id = trim($_POST["dancer_id"]);
@@ -93,20 +94,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 						left join roles as r2 on rc.role_id2 = r2.role_id
 						where c.re_id=". $input_re_id ." and c.dancer_id=". $input_dancer_id ." 
 						and  (rc.role_id2 = c.role_id and rc.role_id1 =". $input_role_id .") ;" ;
+	//check if a performnace, so apply the conflict rules
 	$conflict_list = mysqli_query($conn, $sql_conflict_list);
-	
-    if(empty($input_dancer_id) || empty($input_role_id)){
-        $input_dancer_err = 'Please select a dancer and role to cast.';
-		$input_role_err = 'Please select a dancer and role to cast.';
-    }elseif((strcmp($type,"Rehearsal") <> 0)){	//a performnace, so apply the conflict rules
+    if( (strcmp($type,"Rehearsal") <> 0)){	
 		while($conflict_row = mysqli_fetch_array($conflict_list)){
 			$input_dancer_err = 'This dancer cannot dance both ' . $conflict_row['role1'] .' and '. $conflict_row['role2'] . ' in this production.';
 			$input_role_err = 'This dancer cannot dance both ' . $conflict_row['role1'] .' and '. $conflict_row['role2'] . ' in this production.';
 		}
 		mysqli_free_result($conflict_list);	
-	}else{
-        $dancer_id = $input_dancer_id;
-		$role_id = $input_role_id;
 	}
 	
 	//check that the this casting doesn't alread exist for this rehearsal.
@@ -127,13 +122,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             // Bind variables to the prepared statement as parameters
             mysqli_stmt_bind_param($stmt, "iii", $param_dancer_id, $param_role_id, $param_re_id);
             // Set parameters
-            $param_dancer_id = $dancer_id;
-            $param_role_id = $role_id;
+            $param_dancer_id = $input_dancer_id;
+            $param_role_id = $input_role_id;
             $param_re_id = $input_re_id;
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
                 // Records created successfully. Redirect to landing page
 				$landing_page = "location: castings.php?re_id=" . $param_re_id;
+				//$landing_page = "location: castings.php?re_id=" . $param_re_id;
                 header($landing_page);
                 exit();
             } else{

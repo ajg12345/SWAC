@@ -17,7 +17,7 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 	// Get URL parameter
 	$re_id =  trim($_GET["re_id"]);					
 	
-	$sql = "SELECT  re.re_id as re_id,
+	$sql_title = "SELECT  re.re_id as re_id,
 				re.is_performance as is_performance,
 				loc.building as building, 
 				loc.room as room, 
@@ -31,16 +31,16 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 				join locations as loc on re.location_id = loc.location_id
 				where re.re_id = " . $re_id . ";";
 				
-	if($result = mysqli_query($conn, $sql)){
-		while($row = mysqli_fetch_array($result)){
-			$building = $row['building'];
-			$production = $row['production'];
-			$prod_id = $row['prod_id'];
-			$room = $row['room'];
-			$perf_dt = $row['perf_dt'];
-			$start_time = $row['start_time'];
-			$end_time = $row['end_time'];
-			if ($row['is_performance'] == 1){$type = "Performance";}
+	if($result_title = mysqli_query($conn, $sql_title)){
+		while($row_title = mysqli_fetch_array($result_title)){
+			$building = $row_title['building'];
+			$production = $row_title['production'];
+			$prod_id = $row_title['prod_id'];
+			$room = $row_title['room'];
+			$perf_dt = $row_title['perf_dt'];
+			$start_time = $row_title['start_time'];
+			$end_time = $row_title['end_time'];
+			if ($row_title['is_performance'] == 1){$type = "Performance";}
 		}
 	}
 }
@@ -82,8 +82,6 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 								echo "<table class='table table-bordered table-striped'>";
 									echo "<thead>";
 										echo "<tr>";
-											//echo "<th>casting_id</th>";
-											//echo "<th>Production</th>";
 											echo "<th>Role</th>";
 											echo "<th>Dancer</th>";
 										echo "</tr>";
@@ -91,8 +89,6 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 									echo "<tbody>";
 									while($row = mysqli_fetch_array($result)){
 										echo "<tr>";
-											//echo "<td>" . $row['casting_id'] . "</td>";
-											//echo "<td>" . $row['production'] . "</td>";
 											echo "<td>" . $row['role'] . "</td>";
 											echo "<td>" . $row['dancer'] . "</td>";
 											echo "<td>";
