@@ -52,7 +52,7 @@ session_start();
 			<li><a href="productions.php">productions</a></li>
 			<li><a href="rehearsals.php">rehearsals</a></li>
 			<li><a href="#">roles</a></li>
-			<li><a href="#">role conflicts</a></li>
+			<li><a href="conflicts.php">role conflicts</a></li>
 			<li><a href="locations.php">locations</a></li>
 			<li><a href="#">notification templates</a></li>';
 			}
