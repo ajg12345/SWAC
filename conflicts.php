@@ -1,85 +1,101 @@
 <?php
 include_once "includes/header.php";
 include_once "includes/crudheader.php";
+include_once 'includes/dbh.inc.php';
+//$prod_id = 1;
+
 ?>
 
 <div class= "grid">
-	<div class="title"><h1>Joffrey Ballet Rehearsals</h1></div>
+	<div class="title"><h1>Joffrey Ballet Role Conflicts</h1></div>
 	<div class="content"> 
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
 					<div class="page-header clearfix">
-						<a href="rehearsalcreate.php" class="btn btn-success pull-right">Add New Rehearsal</a>
+						<h3>First select a Production</h3>
+						<select id="prod_select" class="form-control">
+							<?php //the add new conflict button below will have to pass a get to the conflict create page link.
+							$sql_prod_list = "SELECT * FROM productions order by create_dt desc";
+							$result_prod_list = mysqli_query($conn, $sql_prod_list);
+							while($prod_row = mysqli_fetch_array($result_prod_list)){
+								echo '<option value="' . $prod_row['prod_id'] . '">' . $prod_row['description'] .'</option>';
+							}
+							mysqli_free_result($result_prod_list);	
+							?>
+						</select>
+						<br>
+						
+						<a href="conflictcreate.php" class="btn btn-success pull-right">Add New Conflict to this Production</a>
 					</div>
 					<?php
-					include_once 'includes/dbh.inc.php';
 					// Attempt select query execution
-					$sql = "SELECT  re.re_id as re_id,
-									loc.building as building, 
-									loc.room as room, 
-									pro.description as production, 
-									re.perf_dt as perf_dt, 
-									re.start_time as start_time, 
-									re.end_time as end_time 
-									FROM rehearsals as re
-									join productions as pro on re.prod_id = pro.prod_id
-									join locations as loc on re.location_id = loc.location_id
-									where re.is_performance = 0";
-					if($result = mysqli_query($conn, $sql)){
-						if(mysqli_num_rows($result) > 0){
-							echo "<table class='table table-bordered table-striped'>";
-								echo "<thead>";
-									echo "<tr>";
-										//echo "<th>Rehearsal ID</th>";
-										echo "<th>Building</th>";
-										echo "<th>Room</th>";
-										echo "<th>Production</th>";
-										echo "<th>Date</th>";
-										echo "<th>Start Time</th>";
-										echo "<th>End Time</th>";
-									echo "</tr>";
-								echo "</thead>";
-								echo "<tbody>";
-								while($row = mysqli_fetch_array($result)){
-									echo "<tr>";
-										//echo "<td>" . $row['re_id'] . "</td>";
-										echo "<td>" . $row['building'] . "</td>";
-										echo "<td>" . $row['room'] . "</td>";
-										echo "<td>" . $row['production'] . "</td>";
-										echo "<td>" . $row['perf_dt'] . "</td>";
-										echo "<td>" . $row['start_time'] . "</td>";
-										echo "<td>" . $row['end_time'] . "</td>";
-										echo "<td>";
-											echo "<a href='castings.php?re_id=". $row['re_id'] ."' title='View Casting' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
-											echo "<a href='rehearsalupdate.php?re_id=". $row['re_id'] ."' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
-											echo "<a href='rehearsaldelete.php?re_id=". $row['re_id'] ."' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
-										echo "</td>";
-									echo "</tr>";
-								}
-								echo "</tbody>";                            
-							echo "</table>";
-							// Free result set
-							mysqli_free_result($result);
-						} else{
-							echo "<p class='lead'><em>No records were found.</em></p>";
-						}
-					} else{
-						echo "ERROR: Could not execute $sql. " . mysqli_error($conn);
-					}
-
-					// Close connection
-					mysqli_close($conn);
+						echo "<table class='table table-bordered table-striped'>";
+							echo "<thead>";
+								echo "<tr>";
+									echo "<th>Conflict pair id</th>";
+									echo "<th>Role 1</th>";
+									echo "<th>Role 2</th>";
+									echo "<th></th>";
+								echo "</tr>";
+							echo "</thead>";
+							echo "<tbody id='conflict_table'>";
+							
+								echo "<tr>";
+									echo "<td>None</td>";
+									echo "<td>Nothing selected</td>";
+									echo "<td>Nothing selected</td>";
+									echo "<td>Nothing selected</td>";
+								echo "</tr>";
+								
+							
+							echo "</tbody>";                            
+						echo "</table>";					
 					?>
 				</div>	
 			</div>
 		</div>	
 	</div>	
 </div>	
-	
+<!-- Script -->
+<script type="text/javascript">
+	$(document).ready(function(){
+
+    $("#prod_select").change(function(){
+        var prod_id = $(this).val();
+
+        $.ajax({
+            url: 'getconflicts.php',
+            type: 'post',
+            data: {prod_id:prod_id},
+            dataType: 'json',
+            success:function(response){
+
+                var len = response.length;
+
+                $("#conflict_table").empty();
+				
+                for( var i = 0; i<len; i++){
+					
+                    var pair_id = response[i]['conflict_pair_id'];
+                    var name1 = response[i]['role1'];
+					var name2 = response[i]['role2'];
+                    $("#conflict_table").append("<tr><td>"+pair_id+"</td><td>"+name1+"</td><td>"+name2+"</td><td><a href='conflictdelete.php?conflict_pair_id="+pair_id+"' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a></td></tr>");
+					
+					
+					
+                }
+				
+            }
+        });
+    });
+
+});
+</script>
 	
 
 <?php
+//close connection
+mysqli_close($conn);
 include_once "includes/footer.php";
 ?>
-
