@@ -26,7 +26,7 @@ include_once 'includes/dbh.inc.php';
 						</select>
 						<br>
 						
-						<a href="conflictcreate.php" class="btn btn-success pull-right">Add New Conflict to this Production</a>
+						<a id="create_conflict_button" href="conflictcreate.php" class="btn btn-success pull-right" style="display: none;">Add New Conflict to this Production</a>
 					</div>
 					<?php
 					// Attempt select query execution
@@ -63,7 +63,10 @@ include_once 'includes/dbh.inc.php';
 
     $("#prod_select").change(function(){
         var prod_id = $(this).val();
-
+		
+		var conflict_create_target = "conflictcreate.php?prod_id=" + prod_id;
+		$("#create_conflict_button").attr("href", conflict_create_target);
+		$("#create_conflict_button").attr("style", "display:initial;");
         $.ajax({
             url: 'getconflicts.php',
             type: 'post',
@@ -72,7 +75,7 @@ include_once 'includes/dbh.inc.php';
             success:function(response){
 
                 var len = response.length;
-
+				
                 $("#conflict_table").empty();
 				
                 for( var i = 0; i<len; i++){
@@ -81,11 +84,8 @@ include_once 'includes/dbh.inc.php';
                     var name1 = response[i]['role1'];
 					var name2 = response[i]['role2'];
                     $("#conflict_table").append("<tr><td>"+pair_id+"</td><td>"+name1+"</td><td>"+name2+"</td><td><a href='conflictdelete.php?conflict_pair_id="+pair_id+"' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a></td></tr>");
-					
-					
-					
+	
                 }
-				
             }
         });
     });
