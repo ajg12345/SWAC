@@ -88,7 +88,8 @@ if(isset($_POST["re_id"]) && !empty($_POST["re_id"]) && isset($_POST["new_re_id"
 				$header_target = "location: error.php?error_code=6";
 				header($header_target);
 				exit();
-            }						
+            }		
+		}			
 }
 ?>
 
