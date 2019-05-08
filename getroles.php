@@ -11,7 +11,7 @@ $sql_role = 	"SELECT r.role_id,
 						p.description as production
 						from roles as r
 						join productions as p on r.prod_id = p.prod_id
-						where r.prod_id =". $production_id ." ;";
+						where r.prod_id =". $production_id ." order by role_id asc;";
 $role_result = mysqli_query($conn,$sql_role);
 $role_array = array();
 while($role_row = mysqli_fetch_array($role_result)){

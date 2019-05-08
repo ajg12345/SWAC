@@ -18,6 +18,7 @@ include_once 'includes/dbh.inc.php';
 							<?php //the add new conflict button below will have to pass a get to the conflict create page link.
 							$sql_prod_list = "SELECT * FROM productions order by create_dt desc";
 							$result_prod_list = mysqli_query($conn, $sql_prod_list);
+							echo '<option value="null">-</option>';
 							while($prod_row = mysqli_fetch_array($result_prod_list)){
 								echo '<option value="' . $prod_row['prod_id'] . '">' . $prod_row['description'] .'</option>';
 							}

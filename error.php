@@ -15,6 +15,10 @@ if (!empty($error_code)){
 		$error_message = "The URL did not contain an ID in the role update page.";		
 	}elseif(strcmp($error_code,6) == 0){
 		$error_message = "The insert statement when trying to copy castings from one prod to another failed.";				
+	}elseif(strcmp($error_code,7) == 0){
+		$error_message = "The insert statement failed when trying to create a new role.";	
+	}elseif(strcmp($error_code,8) == 0){
+		$error_message = "The production was not displayed in the role create page for an unknown reason.";		
 	}else{
 		$error_message = "Unhandled error code in url. Please consult the code master.";
 	}
