@@ -82,6 +82,7 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 					
 					// Attempt select query execution
 					if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
+						$re_id = $_GET["re_id"];
 						// Get URL parameter
 						if($result = mysqli_query($conn, $sql)){
 							if($casting_count > 0){
@@ -98,8 +99,8 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 											echo "<td>" . $row['role'] . "</td>";
 											echo "<td>" . $row['dancer'] . "</td>";
 											echo "<td>";
-												echo "<a href='castingupdate.php?casting_id=". $row['casting_id'] ."' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
-												echo "<a href='castingdelete.php?casting_id=". $row['casting_id'] ."' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
+												echo "<a href='castingupdate.php?casting_id=". $row['casting_id'] ."&re_id=". $re_id ."' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
+												echo "<a href='castingdelete.php?casting_id=". $row['casting_id'] ."&re_id=". $re_id ."' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
 											echo "</td>";
 										echo "</tr>";
 									}

@@ -3,39 +3,41 @@ require_once "includes/header.php";
 require_once "includes/dbh.inc.php";
 
 // Process delete operation after confirmation
-if(isset($_POST["dancer_id"]) && !empty($_POST["dancer_id"])){    
-    // Prepare a delete statement
-    $sql = "Update dancers set is_active = 0 WHERE dancer_id = ?";
-    
-    if($stmt = mysqli_prepare($conn, $sql)){
-        // Bind variables to the prepared statement as parameters
-        mysqli_stmt_bind_param($stmt, "i", $param_id);
-        
-        // Set parameters
-        $param_id = trim($_POST["dancer_id"]);
-        
-        // Attempt to execute the prepared statement
-        if(mysqli_stmt_execute($stmt)){
-            // Records deleted successfully. Redirect to landing page
-            header("location: dancers.php");
-            exit();
-        } else{
-            echo "Oops! Something went wrong. Please try again later.";
-        }
-    }
-     
-    // Close statement
-    mysqli_stmt_close($stmt);
-    
-    // Close connection
-    mysqli_close($conn);
-} else{
-    // Check existence of id parameter
-    if(empty(trim($_GET["dancer_id"]))){
-        // URL doesn't contain id parameter. Redirect to error page
-        header("location: error.php");
-        exit();
-    }
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+	if(isset($_POST["dancer_id"]) && !empty($_POST["dancer_id"])){
+		// Prepare a delete statement
+		$sql = "Update dancers set is_active = 0 WHERE dancer_id = ?";
+		
+		if($stmt = mysqli_prepare($conn, $sql)){
+			// Bind variables to the prepared statement as parameters
+			mysqli_stmt_bind_param($stmt, "i", $param_id);
+			
+			// Set parameters
+			$param_id = trim($_POST["dancer_id"]);
+			
+			// Attempt to execute the prepared statement
+			if(mysqli_stmt_execute($stmt)){
+				// Records deleted successfully. Redirect to landing page
+				header("location: dancers.php");
+				exit();
+			} else{
+				echo "Oops! Something went wrong. Please try again later.";
+			}
+		}
+		 
+		// Close statement
+		mysqli_stmt_close($stmt);
+		
+		// Close connection
+		mysqli_close($conn);
+	} else{
+		// Check existence of id parameter
+		if(empty(trim($_GET["dancer_id"]))){
+			// URL doesn't contain id parameter. Redirect to error page
+			header("location: error.php");
+			exit();
+		}
+	}
 }
 include_once "includes/crudheader.php";
 ?>
