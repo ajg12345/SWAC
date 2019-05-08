@@ -34,6 +34,7 @@ include_once "includes/crudheader.php";
 										echo "<td>" . $row['create_dt'] . "</td>";
 										echo "<td>";
 											echo "<a href='productiondelete.php?prod_id=". $row['prod_id'] ."' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
+											echo "<a href='productionupdate.php?prod_id=". $row['prod_id'] ."' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
 										echo "</td>";
 									echo "</tr>";
 								}

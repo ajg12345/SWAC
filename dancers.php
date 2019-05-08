@@ -4,7 +4,7 @@ include_once "includes/crudheader.php";
 ?>
 
 <div class= "grid">
-	<div class="title"><h1>Joffrey Ballet Dancer Listing Landing Page</h1></div>
+	<div class="title"><h1>Joffrey Ballet's Active Dancers</h1></div>
 	<div class="content"> 
         <div class="container-fluid">
             <div class="row">
