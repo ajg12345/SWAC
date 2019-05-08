@@ -86,7 +86,7 @@ include_once 'includes/dbh.inc.php';
                     var role_id = response[i]['role_id'];
                     var role = response[i]['role'];
 					var role_count = response[i]['role_count'];
-                    $("#role_table").append("<tr><td>"+prod_id+"</td><td>"+production+"</td><td>"+role_id+"</td><td>"+role+"</td><td>"+role_count+"</td><td><a href='roledelete.php?role_id="+role_id+"' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a></td></tr>");
+                    $("#role_table").append("<tr><td>"+prod_id+"</td><td>"+production+"</td><td>"+role_id+"</td><td>"+role+"</td><td>"+role_count+"</td><td><a href='roledelete.php?role_id="+role_id+"' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a><a href='roleupdate.php?role_id="+role_id+"' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a></td></tr>");
 	
                 }
             }

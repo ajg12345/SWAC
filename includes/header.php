@@ -44,12 +44,12 @@ session_start();
 
 	<aside class="nav-sidebar"> 
 		<ul>
-			<li><span>admin create menu:</span></li>
+			<li><span>admin menu:</span></li>
 			<?php 
 			if (isset($_SESSION['useruid']) && $_SESSION['can_create'] === 1)  {
 			echo '<li><a href="dancers.php">dancers</a></li>
-			<li><a href="performances.php">performances</a></li>
 			<li><a href="productions.php">productions</a></li>
+			<li><a href="performances.php">performances</a></li>
 			<li><a href="rehearsals.php">rehearsals</a></li>
 			<li><a href="roles.php">roles</a></li>
 			<li><a href="conflicts.php">role conflicts</a></li>

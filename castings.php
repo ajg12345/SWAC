@@ -3,6 +3,7 @@ include_once "includes/header.php";
 include_once "includes/crudheader.php";
 include_once 'includes/dbh.inc.php';
 //get casting labels lke location, time, prod etc.
+$casting_count = 0;
 $building = "";
 $production = "";
 $prod_id = "";
@@ -32,6 +33,7 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 				where re.re_id = " . $re_id . ";";
 				
 	if($result_title = mysqli_query($conn, $sql_title)){
+
 		while($row_title = mysqli_fetch_array($result_title)){
 			$building = $row_title['building'];
 			$production = $row_title['production'];
@@ -43,19 +45,36 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 			if ($row_title['is_performance'] == 1){$type = "Performance";}
 		}
 	}
+	//add code to check the number of castings in this show, set $casting_count
+	$sql = "SELECT  
+			c.casting_id,
+			p.description as production,
+			p.prod_id as prod_id,
+			r.description as role,
+			d.dancer_fullname as dancer
+			FROM castings as c 
+			join roles r on c.role_id = r.role_id
+			join dancers as d on c.dancer_id = d.dancer_id
+			join rehearsals as re on c.re_id = re.re_id
+			join productions as p on re.prod_id = p.prod_id
+			where c.re_id = " . $re_id . " order by c.role_id asc;";
+	if($result = mysqli_query($conn, $sql)){
+		$casting_count = mysqli_num_rows($result) ;
+	}
 }
 ?>
 
 <div class= "grid">
 	<div class="title">
 		<h1><?php echo $type; ?> Casting</h1>
-		<?php echo "<h2>".$production." on ".$perf_dt." from ".$start_time." to ".$end_time."</h2>"; ?>
+		<?php echo "<h2>".$production." on ".date("m-d-Y", strtotime($perf_dt))." from ".date("g:i a", strtotime($start_time))." to ".date("g:i a", strtotime($end_time))."</h2>"; ?>
 	</div>
 	<div class="content"> 
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-					<div class="page-header clearfix">
+					<?php if($casting_count > 0){echo '<div><a href="castingCopy.php?re_id='. $re_id .'" class="btn btn-success pull-right">Copy Casting to another performance or rehearsal of "'.$production.'"</a></div>';}?>
+					<div class="page-header clearfix">		
 						<?php echo '<a href="castingcreate.php?re_id='. $re_id .'" class="btn btn-success pull-right">Cast Additional Role</a>' ?>
 					</div>
 					<?php
@@ -63,22 +82,8 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 					// Attempt select query execution
 					if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 						// Get URL parameter
-						$re_id =  trim($_GET["re_id"]);					
-						
-						$sql = "SELECT  
-								c.casting_id,
-								p.description as production,
-								p.prod_id as prod_id,
-								r.description as role,
-								d.dancer_fullname as dancer
-								FROM castings as c 
-								join roles r on c.role_id = r.role_id
-								join dancers as d on c.dancer_id = d.dancer_id
-								join rehearsals as re on c.re_id = re.re_id
-								join productions as p on re.prod_id = p.prod_id
-								where c.re_id = " . $re_id . " order by c.role_id asc;";
 						if($result = mysqli_query($conn, $sql)){
-							if(mysqli_num_rows($result) > 0){
+							if($casting_count > 0){
 								echo "<table class='table table-bordered table-striped'>";
 									echo "<thead>";
 										echo "<tr>";

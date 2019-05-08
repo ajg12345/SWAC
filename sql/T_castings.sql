@@ -8,3 +8,8 @@ dancer_id int
 
 insert into castings(re_id, role_id, dancer_id)
 values(1,1,1);
+
+insert into castings(re_id, role_id, dancer_id)
+values(1,2,2);
+
+

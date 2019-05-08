@@ -11,3 +11,9 @@ values('Impresario', 1, 0);
 
 insert into roles(description, prod_id, role_count)
 values('Snowflakes', 1, 8);
+
+insert into roles(description, prod_id, role_count)
+values('Clara', 1, 1);
+
+insert into roles(description, prod_id, role_count)
+values('Dance Lead #1', 2, 1);

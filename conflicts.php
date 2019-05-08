@@ -25,7 +25,6 @@ include_once 'includes/dbh.inc.php';
 							?>
 						</select>
 						<br>
-						
 						<a id="create_conflict_button" href="conflictcreate.php" class="btn btn-success pull-right" style="display: none;">Add New Conflict to this Production</a>
 					</div>
 					<?php

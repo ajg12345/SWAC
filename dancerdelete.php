@@ -5,7 +5,7 @@ require_once "includes/dbh.inc.php";
 // Process delete operation after confirmation
 if(isset($_POST["dancer_id"]) && !empty($_POST["dancer_id"])){    
     // Prepare a delete statement
-    $sql = "DELETE FROM dancers WHERE dancer_id = ?";
+    $sql = "Update dancers set is_active = 0 WHERE dancer_id = ?";
     
     if($stmt = mysqli_prepare($conn, $sql)){
         // Bind variables to the prepared statement as parameters
@@ -41,13 +41,13 @@ include_once "includes/crudheader.php";
 ?>
  <div class="grid">
 	<div class="title">
-		<h1>Delete Dancer</h1>
+		<h1>Inactivate Dancer</h1>
 	</div>
 	<div class="content">
 	<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 		<div class="alert alert-danger fade in">
 			<input type="hidden" name="dancer_id" value="<?php echo trim($_GET["dancer_id"]); ?>"/>
-			<p>Are you sure you want to delete this dancer?</p><br>
+			<p>This will mark the dancer as inactive and unable to be cast in future shows, but still present in old records.</p><br>
 			<p>
 				<input type="submit" value="Yes" class="btn btn-danger">
 				<a href="dancers.php" class="btn btn-default">No</a>

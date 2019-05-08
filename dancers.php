@@ -15,7 +15,7 @@ include_once "includes/crudheader.php";
 					<?php
 					include_once 'includes/dbh.inc.php';
 					// Attempt select query execution
-					$sql = "SELECT * FROM dancers";
+					$sql = "SELECT * FROM dancers where is_active = 1;";
 					if($result = mysqli_query($conn, $sql)){
 						if(mysqli_num_rows($result) > 0){
 							echo "<table class='table table-bordered table-striped'>";

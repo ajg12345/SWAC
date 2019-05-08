@@ -22,13 +22,7 @@ if(isset($_POST["re_id"]) && !empty($_POST["re_id"])){
 	
     // Get hidden input value
     $re_id = $_POST["re_id"];
-     // Validate production_id
-    $input_prod_id = trim($_POST["prod_id"]);
-    if(empty($input_prod_id)){
-        $prod_id_err = 'Please select a production.';
-    }else{
-        $prod_id = $input_prod_id;
-	}
+    // Validate production_id
 	
 	// Validate location_id
     $input_location_id = trim($_POST["location_id"]);
@@ -62,16 +56,15 @@ if(isset($_POST["re_id"]) && !empty($_POST["re_id"])){
         $end_time = $input_end_time;
     }
     // Check input errors before inserting in database
-    if(empty($prod_id_err) && empty($perf_dt_err) && empty($location_id_err) && empty($start_time_err) && empty($end_time_err)){
+    if(empty($perf_dt_err) && empty($location_id_err) && empty($start_time_err) && empty($end_time_err)){
         // Prepare an update statement
-        $sql = "UPDATE rehearsals SET prod_id=?, location_id=?, perf_dt=?, start_time =?, end_time=? WHERE re_id=?";
+        $sql = "UPDATE rehearsals SET location_id=?, perf_dt=?, start_time =?, end_time=? WHERE re_id=?";
          
         if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "iisssi", $param_prod_id, $param_location_id, $param_perf_dt, $param_start_time, $param_end_time, $param_re_id);
+            mysqli_stmt_bind_param($stmt, "isssi",  $param_location_id, $param_perf_dt, $param_start_time, $param_end_time, $param_re_id);
             
             // Set parameters
-            $param_prod_id = $prod_id;
             $param_location_id = $location_id;
             $param_perf_dt = $perf_dt;
 			$param_start_time = $start_time;
@@ -165,9 +158,6 @@ include_once "includes/crudheader.php";
 					<?php 
 					$current_prod_row = mysqli_fetch_array($current_prod);
 					echo '<option value="' . $current_prod_row['prod_id'] . '">' . $current_prod_row['production'] . '</option>';
-					while($prod_row = mysqli_fetch_array($prod_list)){
-						echo '<option value="' . $prod_row['prod_id'] . '">' . $prod_row['production'] . '</option>';
-					}
 					?>
 				</select>
 				<span class="help-block"><?php echo $prod_id_err;?></span>
