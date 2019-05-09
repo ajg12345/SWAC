@@ -19,6 +19,10 @@ if (!empty($error_code)){
 		$error_message = "The insert statement failed when trying to create a new role.";	
 	}elseif(strcmp($error_code,8) == 0){
 		$error_message = "The production was not displayed in the role create page for an unknown reason.";		
+	}elseif(strcmp($error_code,9) == 0){
+		$error_message = "The insert statement generated upon role copy did not execute successfully. No Roles were copied.";		
+	}elseif(strcmp($error_code,10) == 0){
+		$error_message = "No conflicts were copied because the destination production did not have the necessary roles.<br>Copy roles first then try again.";			
 	}else{
 		$error_message = "Unhandled error code in url. Please consult the code master.";
 	}

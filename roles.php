@@ -18,7 +18,7 @@ include_once 'includes/dbh.inc.php';
 							<?php //the add new conflict button below will have to pass a get to the conflict create page link.
 							$sql_prod_list = "SELECT * FROM productions order by create_dt desc";
 							$result_prod_list = mysqli_query($conn, $sql_prod_list);
-							echo '<option value="null">-</option>';
+							echo '<option id="default_option" value="null">-</option>';
 							while($prod_row = mysqli_fetch_array($result_prod_list)){
 								echo '<option value="' . $prod_row['prod_id'] . '">' . $prod_row['description'] .'</option>';
 							}
@@ -26,7 +26,7 @@ include_once 'includes/dbh.inc.php';
 							?>
 						</select>
 						<br>
-						
+						<a id="copy_roles_button" href="rolesCopy.php" class="btn btn-success pull-right" style="display: none;">Copy Roles to Production without Roles</a>
 						<a id="create_role_button" href="rolecreate.php" class="btn btn-success pull-right" style="display: none;">Add New Role to this Production</a>
 					</div>
 					<?php
@@ -68,8 +68,10 @@ include_once 'includes/dbh.inc.php';
         var prod_id = $(this).val();
 		
 		var create_role_target = "rolecreate.php?prod_id=" + prod_id;
+		var copy_role_target = "rolesCopy.php?prod_id=" + prod_id;
 		$("#create_role_button").attr("href", create_role_target);
 		$("#create_role_button").attr("style", "display:initial;");
+		$("#default_option").attr("style", "display:none;");
         $.ajax({
             url: 'getroles.php',
             type: 'post',
@@ -78,7 +80,12 @@ include_once 'includes/dbh.inc.php';
             success:function(response){
 
                 var len = response.length;
-				
+				if(len > 0){
+					$("#copy_roles_button").attr("style", "display:initial;");
+					$("#copy_roles_button").attr("href", copy_role_target);
+				}else{
+					$("#copy_roles_button").attr("style", "display:none;");
+				}
                 $("#role_table").empty();
 				
                 for( var i = 0; i<len; i++){
