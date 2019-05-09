@@ -5,7 +5,7 @@ require_once "includes/dbh.inc.php";
 // Process delete operation after confirmation
 if(isset($_POST["location_id"]) && !empty($_POST["location_id"])){    
     // Prepare a delete statement
-    $sql = "DELETE FROM locations WHERE location_id = ?";
+    $sql = "update locations set is_active = 0 WHERE location_id = ?";
     
     if($stmt = mysqli_prepare($conn, $sql)){
         // Bind variables to the prepared statement as parameters
@@ -47,7 +47,9 @@ include_once "includes/crudheader.php";
 	<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 		<div class="alert alert-danger fade in">
 			<input type="hidden" name="location_id" value="<?php echo trim($_GET["location_id"]); ?>"/>
-			<p>Are you sure you want to delete this location?</p><br>
+			<p>Are you sure you want to inactivate this location? <br>
+			It will no longer be an option to select from when making performances or rehearsals.<br>
+			It will still be seen in historical performance and rehearsal records.</p>
 			<p>
 				<input type="submit" value="Yes" class="btn btn-danger">
 				<a href="locations.php" class="btn btn-default">No</a>

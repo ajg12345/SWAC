@@ -1,7 +1,8 @@
 create table locations(
 room text not null,
 building text not null,
-location_id int AUTO_INCREMENT primary key
+location_id int AUTO_INCREMENT primary key,
+is_active int default 1
 );
 
 
@@ -10,3 +11,9 @@ values('Main Stage', 'Auditorium Theatre');
 
 insert into locations(room, building)
 values('Studio A', 'Joffrey Tower');
+
+insert into locations(room, building)
+values('Studio B', 'Joffrey Tower');
+
+insert into locations(room, building)
+values('Studio C', 'Joffrey Tower');
