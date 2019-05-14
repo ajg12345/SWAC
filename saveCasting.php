@@ -66,16 +66,16 @@ $of_handler = fopen($output_file, 'a');			//readying the append
 fwrite($of_handler, "\n".'Role, Dancer'); 			//readying the append//input the header row of the document
 $old_role = null;		//make sure that duplicated roles are not repeated again and again.
 while($role_row = mysqli_fetch_array($casting_result)){
-	if(is_null($old_role)){		//first loop
+	if(is_null($old_role)){					//first loop so insert a newline below the header
 		$old_role = $role_row['role'];
-		$role = $role_row['role'];
+		$role = "\n".$role_row['role'];
 		$dancer = $role_row['dancer'];
 	}elseif(strcmp($old_role, $role_row['role']) == 0){
 		$role = '';
 		$dancer = $role_row['dancer'];
-	}else{
+	}else{									//new role so insert a newline space
 		$old_role = $role_row['role'];
-		$role = $role_row['role'];
+		$role = "\n".$role_row['role'];
 		$dancer = $role_row['dancer'];
 	}
 	
@@ -84,10 +84,25 @@ while($role_row = mysqli_fetch_array($casting_result)){
 }
 
 fclose($of_handler);
+
+if (file_exists($output_file)) {
+    header('Content-Description: File Transfer');
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="'.basename($output_file).'"');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($output_file));
+	flush();
+    readfile($output_file);
+    exit;
+}
+
 mysqli_free_result($title_result);
 mysqli_free_result($casting_result);
 mysqli_close($conn);
-$destination = "location: castings.php?re_id=".$re_id."#file_saved_as#".$output_file;
+unlink($output_file);
+$destination = "location: castings.php?re_id=".$re_id."#file_created_as#".$output_file;
 header($destination);
 exit();
 
