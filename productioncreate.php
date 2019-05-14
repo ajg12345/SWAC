@@ -20,7 +20,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Check input errors before inserting in database
     if(empty($description_err)){
         // Prepare an insert statement
-        $sql = "INSERT INTO productions(description, create_dt) VALUES (?, NOW())";
+        $sql = "INSERT INTO productions(description, create_dt) VALUES (?, date(NOW()))";
          
         if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters

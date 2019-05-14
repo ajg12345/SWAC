@@ -5,7 +5,7 @@ require_once "includes/dbh.inc.php";
 // Process delete operation after confirmation
 if(isset($_POST["prod_id"]) && !empty($_POST["prod_id"])){    
     // Prepare a delete statement
-    $sql = "DELETE FROM productions WHERE prod_id = ?";
+    $sql = "update productions set is_active = 0 WHERE prod_id = ?";
     
     if($stmt = mysqli_prepare($conn, $sql)){
         // Bind variables to the prepared statement as parameters
@@ -47,7 +47,9 @@ include_once "includes/crudheader.php";
 	<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 		<div class="alert alert-danger fade in">
 			<input type="hidden" name="prod_id" value="<?php echo trim($_GET["prod_id"]); ?>"/>
-			<p>Are you sure you want to delete this production?</p><br>
+			<p>Are you sure you want to inactivate this production?</p><br>
+			<p>It will no longer be able to be chosen for new performances and rehearsals,</p><br>
+			<p>but will still be referenced in historical activities.</p><br>
 			<p>
 				<input type="submit" value="Yes" class="btn btn-danger">
 				<a href="productions.php" class="btn btn-default">No</a>

@@ -14,7 +14,7 @@ $start_time = $start_time_err = $end_time = $end_time_err = "";
 //gather all options for selecting a new production
 $sql_loc_list = "select building, room, location_id from locations  where is_active = 1 order by building, room;";
 $loc_list = mysqli_query($conn, $sql_loc_list);
-$sql_prod_list = "select description as production, prod_id, create_dt from productions order by create_dt;";
+$sql_prod_list = "select description as production, prod_id, create_dt from productions where is_active = 1 order by create_dt;";
 $prod_list = mysqli_query($conn, $sql_prod_list);
 
 // Processing form data when form is submitted
