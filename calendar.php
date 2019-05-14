@@ -36,7 +36,7 @@ $result = mysqli_query($conn, $sql);
 													from rehearsals
 													order by month(perf_dt), year(perf_dt) asc";
 							$result_month_year_list = mysqli_query($conn, $sql_month_year_list);
-							echo '<option id="default_option" value="null">-</option>';
+							echo '<option value=0>all</option>';
 							while($date_row = mysqli_fetch_array($result_month_year_list)){
 								echo '<option value="' . $date_row['date_id'] . '">' . $date_row['date_id'] .'</option>';
 							}

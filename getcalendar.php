@@ -16,7 +16,8 @@ $sql_rehearsals_and_perfs = 	"SELECT
 				FROM rehearsals as re
 				join productions as pro on re.prod_id = pro.prod_id
 				join locations as loc on re.location_id = loc.location_id
-				where (concat(month(re.perf_dt),' ',year(re.perf_dt))) = '".$date_id."' order by re.perf_dt, re.start_time asc";
+				where ((concat(month(re.perf_dt),' ',year(re.perf_dt))) = '".$date_id."' )
+				or ('".$date_id."' = '0') order by re.perf_dt, re.start_time asc";
 $result = mysqli_query($conn,$sql_rehearsals_and_perfs);
 $result_array = array();
 while($role_row = mysqli_fetch_array($result)){
