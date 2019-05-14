@@ -123,7 +123,7 @@ $result = mysqli_query($conn, $sql);
 					
 					var table_contents = "<tr><td>"+re_id+"</td><td>"+is_performance+"</td><td>"+building+"</td><td>"+room+"</td>"+
 											"<td>"+production+"</td><td>"+perf_dt+"</td><td>"+start_time+"</td><td>"+end_time+"</td><td>"+
-											"<a href='castings.php?re_id="+re_id+"' title='View Casting' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>"+
+											"<a href='castings.php?re_id="+re_id+"' title='View Casting' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>"+
 											"</td></tr>";
                     $("#rehearsal_table").append(table_contents);
 	

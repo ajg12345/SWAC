@@ -73,8 +73,9 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-					<?php if($casting_count > 0){echo '<div><a href="castingCopy.php?re_id='. $re_id .'" class="btn btn-success pull-right">Copy Casting to another performance or rehearsal of "'.$production.'"</a></div>';}?>
-					<?php echo '<div><a href="';if(strcmp($type,"Rehearsal") == 0){echo 'rehearsals.php';}else{echo 'performances.php';}echo '" class="btn btn-success pull-right">Return to '.$type.'s Page</a></div>'; ?>
+					<?php if($casting_count > 0){echo '<div><a href="castingCopy.php?re_id='. $re_id .'" class="btn btn-success pull-right">Copy Casting to another performance or rehearsal of "'.$production.'"</a></div>';
+												 echo '<div><form action="saveCasting.php" method="POST"><button class="btn btn-success pull-right" type="submit" name="save_as_file" value="'.$re_id.'">Save As File</button></form></div>';}?>
+					<?php echo '<div><a href="';if(strcmp($type,"Rehearsal") == 0){echo 'rehearsals.php';}else{echo 'performances.php';}echo '" class="btn btn-success pull-left">Return to '.$type.'s Page</a></div>'; ?>
 					<div class="page-header clearfix">		
 						<?php echo '<a href="castingcreate.php?re_id='. $re_id .'" class="btn btn-success pull-right">Cast Additional Role</a>' ?>
 					</div>
@@ -99,7 +100,6 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 											echo "<td>" . $row['role'] . "</td>";
 											echo "<td>" . $row['dancer'] . "</td>";
 											echo "<td>";
-												echo "<a href='castingupdate.php?casting_id=". $row['casting_id'] ."&re_id=". $re_id ."' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
 												echo "<a href='castingdelete.php?casting_id=". $row['casting_id'] ."&re_id=". $re_id ."' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
 											echo "</td>";
 										echo "</tr>";
