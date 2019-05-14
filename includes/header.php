@@ -18,7 +18,7 @@ session_start();
 		<ul>
 			<?php
 				if (isset($_SESSION['useruid']))  {
-					echo '	<li><a href="#">calendar</a></li>';
+					echo '	<li><a href="calendar.php">calendar</a></li>';
 				}
 			?>
 		</ul>

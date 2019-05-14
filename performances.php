@@ -39,6 +39,7 @@ include_once "includes/crudheader.php";
 										echo "<th>Date</th>";
 										echo "<th>Start Time</th>";
 										echo "<th>End Time</th>";
+										echo "<th>Casting</th>";
 									echo "</tr>";
 								echo "</thead>";
 								echo "<tbody>";
