@@ -14,15 +14,27 @@ $start_time = $start_time_err = $end_time = $end_time_err = "";
 //gather all options for selecting a new production
 $sql_loc_list = "select building, room, location_id from locations  where is_active = 1 order by building, room;";
 $loc_list = mysqli_query($conn, $sql_loc_list);
-$sql_prod_list = "select description as production, prod_id, create_dt from productions where is_active = 1 order by create_dt;";
-$prod_list = mysqli_query($conn, $sql_prod_list);
+
 
 // Processing form data when form is submitted
 if(isset($_POST["re_id"]) && !empty($_POST["re_id"])){
 	
-    // Get hidden input value
+	// Get hidden input value
     $re_id = $_POST["re_id"];
-    // Validate production_id
+	
+	$sql_prod_list = "select pro.description as production, pro.prod_id, pro.create_dt 
+					from productions as pro
+					join rehearsals as re on pro.prod_id = re.re_id
+					where is_active = 1 and re.re_id = ".$re_id." order by create_dt;";
+	$current_prod = mysqli_query($conn, $sql_prod_list);
+	
+	$sql_current_loc = "select loc.building, 
+								loc.room, 
+								loc.location_id 
+						from locations as loc
+						join rehearsals as re on re.location_id = loc.location_id
+						where re.re_id = " . $re_id . ";";
+	$current_loc = mysqli_query($conn, $sql_current_loc);
 	
 	// Validate location_id
     $input_location_id = trim($_POST["location_id"]);
@@ -48,13 +60,26 @@ if(isset($_POST["re_id"]) && !empty($_POST["re_id"])){
         $start_time = $input_start_time;
     }
 	
-    // Validate start_time
+    // Validate end_time
     $input_end_time = trim($_POST["end_time"]);
     if(empty($input_end_time)){
         $end_time_err = "Please enter a end time";
     } else{
         $end_time = $input_end_time;
     }
+	
+    // Validate duration
+    $input_end_time = trim($_POST["end_time"]);
+    if( ((strtotime($input_end_time)-strtotime($input_start_time))/3600) > 3){
+        $end_time_err = "Rehearsal durations must be less than 3 hours.";
+		$start_time_err = "Rehearsal durations must be less than 3 hours.";
+    } elseif($input_end_time < $input_start_time){
+		$end_time_err = "End time of rehearsal must be after start time.";
+		$start_time_err = "Start time of rehearsal must be before end time.";
+	}else{
+		$end_time = $input_end_time;
+    }
+	
     // Check input errors before inserting in database
     if(empty($perf_dt_err) && empty($location_id_err) && empty($start_time_err) && empty($end_time_err)){
         // Prepare an update statement
@@ -196,7 +221,8 @@ include_once "includes/crudheader.php";
 		</form>	
 </div>
 <?php
-mysqli_free_result($prod_list);	
+mysqli_free_result($current_prod);	
 mysqli_free_result($loc_list);
+mysqli_free_result($current_loc);
 include_once "includes/footer.php";
 ?>

@@ -14,6 +14,7 @@ $start_time = "";
 $end_time = "";
 $type = "Rehearsal";
 $input_dancer_err = "";
+$input_overbook_err = "";
 $input_role_err = "";
 
 if((isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))) || $_SERVER["REQUEST_METHOD"] == "POST"){
@@ -71,7 +72,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 	$re_id =  trim($_POST["re_id"]);					
 	
 	$sql_perf_check = "SELECT  re.is_performance as is_performance FROM rehearsals as re where re.re_id = " . $re_id . ";";
-	
 	if($perf_check_list = mysqli_query($conn, $sql_perf_check)){
 		while($row_perf_check = mysqli_fetch_array($perf_check_list)){
 			if ($row_perf_check['is_performance'] == 1){$type = "Performance";}
@@ -94,6 +94,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 						left join roles as r2 on rc.role_id2 = r2.role_id
 						where c.re_id=". $input_re_id ." and c.dancer_id=". $input_dancer_id ." 
 						and  (rc.role_id2 = c.role_id and rc.role_id1 =". $input_role_id .") ;" ;
+						
 	//check if a performnace, so apply the conflict rules
 	$conflict_list = mysqli_query($conn, $sql_conflict_list);
     if( (strcmp($type,"Rehearsal") <> 0)){	
@@ -114,8 +115,33 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 		}
 	mysqli_free_result($redundant_list);
 	
+	//check that the dancer isn't overbooked that day (more than 6 hours of rehearsal)
+	$sql_overbook_check = "select sum(end_time - start_time)/10000 as total_hours_in_day
+						from (
+							select 
+							distinct c.dancer_id,
+							start_time, 
+							end_time 
+							from rehearsals as re
+							join castings as c on re.re_id = c.re_id
+							where re.is_performance = 0
+							and re.perf_dt in (SELECT perf_dt FROM rehearsals where re_id = ".$input_re_id.")
+							and c.dancer_id = ".$input_dancer_id."
+							union 
+							select 1, start_time, end_time from rehearsals where re_id = ".$input_re_id."
+						) as a";
+    if( (strcmp($type,"Rehearsal") <> 0)){							
+		if($over_book_duration = mysqli_query($conn, $sql_overbook_check)){
+			while($row_hour_check = mysqli_fetch_array($over_book_duration)){
+				if ($row_hour_check['total_hours_in_day'] > 6){$input_overbook_err = "The dancer you selected was not cast because in so doing they would be booked for over 6 hours that day.";}
+			}
+		}
+	}
+	mysqli_free_result($over_book_duration);
+	
+	
     // Check input errors before inserting in database
-    if(empty($input_dancer_err) && empty($input_role_err)){
+    if(empty($input_dancer_err) && empty($input_role_err) && empty($input_overbook_err)){
         // Prepare an insert statement
         $sql = "INSERT INTO castings(dancer_id, role_id, re_id) VALUES (?, ?, ?)";
         if($stmt = mysqli_prepare($conn, $sql)){
@@ -150,7 +176,7 @@ include_once "includes/crudheader.php";
 	</div>
     <div class="content">
 		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);  echo "?re_id=".$re_id; ?>" method="post">
-			<div class="form-group <?php echo (!empty($input_dancer_err)) ? 'has-error' : ''; ?>">
+			<div class="form-group <?php echo (!empty($input_dancer_err) || !empty($input_overbook_err)) ? 'has-error' : ''; ?>">
 				<label>Dancer</label>
 				<select name="dancer_id" class="form-control">
 					<?php 
@@ -160,7 +186,7 @@ include_once "includes/crudheader.php";
 					mysqli_free_result($dancer_list);	
 					?>
 				</select>
-				<span class="help-block"><?php echo $input_dancer_err;?></span>
+				<span class="help-block"><?php echo $input_dancer_err; echo $input_overbook_err;?></span>
 			</div>
 			<div class="form-group <?php echo (!empty($input_role_err)) ? 'has-error' : ''; ?>">
 				<label>Role</label>

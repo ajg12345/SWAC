@@ -95,7 +95,6 @@ if (file_exists($output_file)) {
     header('Content-Length: ' . filesize($output_file));
 	flush();
     readfile($output_file);
-    exit;
 }
 
 mysqli_free_result($title_result);

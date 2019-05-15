@@ -52,13 +52,26 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $start_time = $input_start_time;
     }
 	
-    // Validate start_time
+    // Validate end_time
     $input_end_time = trim($_POST["end_time"]);
     if(empty($input_end_time)){
         $end_time_err = "Please enter a end time";
     } else{
         $end_time = $input_end_time;
     }
+	
+    // Validate duration
+    $input_end_time = trim($_POST["end_time"]);
+    if( ((strtotime($input_end_time)-strtotime($input_start_time))/3600) > 3){
+        $end_time_err = "Rehearsal durations must be less than 3 hours.";
+		$start_time_err = "Rehearsal durations must be less than 3 hours.";
+    } elseif($input_end_time < $input_start_time){
+		$end_time_err = "End time of rehearsal must be after start time.";
+		$start_time_err = "Start time of rehearsal must be before end time.";
+	}else{
+		$end_time = $input_end_time;
+    }
+	
 	
     // Check input errors before inserting in database
     if(empty($prod_id_err) && empty($perf_dt_err) && empty($location_id_err) && empty($start_time_err) && empty($end_time_err)){
@@ -76,7 +89,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
                 // Records created successfully. Redirect to landing page
-                header("location: rehearsals.php");
+				$destination = "location: rehearsals.php";
+                header($destination);
                 exit();
             } else{
                 echo "Something went wrong. Please try again later.";
