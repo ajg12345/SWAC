@@ -30,7 +30,7 @@ if(isset($_GET["prod_id"]) && !empty(trim($_GET["prod_id"]))){
 	
 	
 }
-//insert check for POST code to insert new casting records into the castings table
+
 if(isset($_POST["prod_id"]) && !empty($_POST["prod_id"]) && isset($_POST["new_prod_id"]) && !empty($_POST["new_prod_id"])){
 	
 	$input_prod_id = trim($_POST["prod_id"]);

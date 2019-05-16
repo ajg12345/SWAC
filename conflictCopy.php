@@ -5,6 +5,7 @@ include_once 'includes/dbh.inc.php';
 //get casting labels lke location, time, prod etc.
 $production = "";
 $prod_id = "";
+$prod_id_err = '';
 
 if(isset($_GET["prod_id"]) && !empty(trim($_GET["prod_id"]))){
 	// Get header text from GET and mysql
@@ -20,6 +21,7 @@ if(isset($_GET["prod_id"]) && !empty(trim($_GET["prod_id"]))){
 			$prod_id = $row_title['prod_id'];
 		}
 	}
+	mysqli_free_result($result_title);
 	
 	//find list of prods without role_conflicts to potentially select
 	$sql_copy_dest = "SELECT  pro.prod_id as new_prod_id,
@@ -35,6 +37,27 @@ if(isset($_POST["prod_id"]) && !empty($_POST["prod_id"]) && isset($_POST["new_pr
 	$input_prod_id = trim($_POST["prod_id"]);
 	$input_new_prod_id = trim($_POST["new_prod_id"]);
 	
+	$sql_title = "SELECT  pro.prod_id,
+				pro.description as production
+				FROM productions as pro
+				where pro.prod_id = " . $input_prod_id . ";";
+	if($result_title = mysqli_query($conn, $sql_title)){
+		while($row_title = mysqli_fetch_array($result_title)){
+			$production = $row_title['production'];
+			$prod_id = $row_title['prod_id'];
+		}
+	}
+	mysqli_free_result($result_title);
+	
+	//find list of prods without role_conflicts to potentially select
+	$sql_copy_dest = "SELECT  pro.prod_id as new_prod_id,
+				pro.description as production
+				FROM productions as pro
+				where pro.prod_id not in (select prod_id from role_conflicts);";
+				
+	$result_destinations = mysqli_query($conn, $sql_copy_dest);
+	
+	
 	$matches = 0;
 	$r1_roles = 1;
 	$r2_roles = 2;
@@ -47,21 +70,21 @@ if(isset($_POST["prod_id"]) && !empty($_POST["prod_id"]) && isset($_POST["new_pr
 	$result_matches = mysqli_query($conn, $sql_role_matches);
 	$matches_row = mysqli_fetch_array($result_matches);
 	$matches = 	$matches_row['matches'];
-	mysqli_free_result($matches_row);
+	mysqli_free_result($result_matches);
 	
 	$sql_r1_roles = "select count(distinct r1.description) as r1_roles
 							from (select description, role_count from roles where prod_id = ".$input_prod_id.") as r1 ";
 	$result_r1_roles = mysqli_query($conn, $sql_r1_roles);
 	$r1_roles_row = mysqli_fetch_array($result_r1_roles);
 	$r1_roles = $r1_roles_row['r1_roles'];
-	mysqli_free_result($r1_roles_row);
+	mysqli_free_result($result_r1_roles);
 	
 	$sql_r2_roles = "select count(distinct r2.description) as r2_roles
 							from (select description, role_count from roles where prod_id = ".$input_new_prod_id.") as r2 ";
 	$result_r2_roles = mysqli_query($conn, $sql_r2_roles);
 	$r2_roles_row = mysqli_fetch_array($result_r2_roles);
 	$r2_roles = $r2_roles_row['r2_roles'];
-	mysqli_free_result($r2_roles_row);
+	mysqli_free_result($result_r2_roles);
 	//be sure to find and exclude possible productions which already have conflicts
 	
 	
@@ -70,7 +93,7 @@ if(isset($_POST["prod_id"]) && !empty($_POST["prod_id"]) && isset($_POST["new_pr
 	$max_pair_id = mysqli_query($conn, $sql_max_pair_id);
 	$max_pair_id_row = mysqli_fetch_array($max_pair_id);
 	$insert_pair_id = $max_pair_id_row['max_conflict_pair_id'];
-	mysqli_free_result($max_pair_id_row);
+	mysqli_free_result($max_pair_id);
 
 	//THS WOULD BE BEST TESTED WITH A SHOW WITH 3 ROLES AND EVERY POSSIBLE COMBINATION OF ROLE_CONFLICT, THEN PROPER CONFLICT PAIR ID ASSIGNMENT
 	$conflict_insert_p1 ="insert into role_conflicts(conflict_pair_id, prod_id, role_id1, role_id2)
@@ -128,9 +151,7 @@ if(isset($_POST["prod_id"]) && !empty($_POST["prod_id"]) && isset($_POST["new_pr
 		header($location_dest);
 		exit();
 	}else{
-		$header_target = "location: error.php?error_code=10";
-		header($header_target);
-		exit();
+		$prod_id_err = "The target production does not have an identical set of roles as the copied production. Role Conflicts were not copied.";
 	}
 }
 ?>
@@ -153,8 +174,10 @@ if(isset($_POST["prod_id"]) && !empty($_POST["prod_id"]) && isset($_POST["new_pr
 						$option_string = $option_string . '</option>'; //close tag
 						echo $option_string;
 					}
+					mysqli_free_result($result_destinations);
 					?>
 				</select>
+				<span class="help-block"><?php echo $prod_id_err;?></span>
 			</div>
 			<input type="submit" class="btn btn-primary" value="Submit">
 			<input type="hidden" name="prod_id" value="<?php echo $prod_id; ?>"/>

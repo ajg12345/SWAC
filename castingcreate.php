@@ -130,7 +130,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 							union 
 							select 1, start_time, end_time from rehearsals where re_id = ".$input_re_id."
 						) as a";
-    if( (strcmp($type,"Rehearsal") <> 0)){							
+    if( (strcmp($type,"Rehearsal") == 0)){							
 		if($over_book_duration = mysqli_query($conn, $sql_overbook_check)){
 			while($row_hour_check = mysqli_fetch_array($over_book_duration)){
 				if ($row_hour_check['total_hours_in_day'] > 6){$input_overbook_err = "The dancer you selected was not cast because in so doing they would be booked for over 6 hours that day.";}
