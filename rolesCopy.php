@@ -20,6 +20,7 @@ if(isset($_GET["prod_id"]) && !empty(trim($_GET["prod_id"]))){
 			$prod_id = $row_title['prod_id'];
 		}
 	}
+	mysqli_free_result($result_title);
 	//find list of prods without roles to populate the drop down select list.
 	$sql_copy_dest = "SELECT  pro.prod_id as new_prod_id,
 				pro.description as production
@@ -77,6 +78,7 @@ if(isset($_POST["prod_id"]) && !empty($_POST["prod_id"]) && isset($_POST["new_pr
 						$option_string = $option_string . '</option>'; //close tag
 						echo $option_string;
 					}
+					mysqli_free_result($result_destinations);
 					?>
 				</select>
 			</div>

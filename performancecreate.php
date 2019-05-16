@@ -85,8 +85,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         // Close statement
         mysqli_stmt_close($stmt);
     }
-    // Close connection
-    mysqli_close($conn);
+
 }
 include_once "includes/crudheader.php";
 ?>
@@ -103,7 +102,9 @@ include_once "includes/crudheader.php";
 					while($prod_row = mysqli_fetch_array($prod_list)){
 						echo '<option value="' . $prod_row['prod_id'] . '">' . $prod_row['production'] . '</option>';
 					}
+					mysqli_free_result($prod_list);
 					?>
+					
 				</select>
 				<span class="help-block"><?php echo $prod_id_err;?></span>
 			</div>
@@ -114,6 +115,7 @@ include_once "includes/crudheader.php";
 					while($loc_row = mysqli_fetch_array($loc_list)){
 						echo '<option value="' . $loc_row['location_id'] . '">' . $loc_row['building'] . ' - ' . $loc_row['room'] .'</option>';
 					}
+					mysqli_free_result($loc_list);
 					?>
 				</select>
 				<span class="help-block"><?php echo $location_id_err;?></span>
@@ -139,8 +141,5 @@ include_once "includes/crudheader.php";
     </div>
 </div>
 <?php
-//free memory assoc with prod and locs
-mysqli_free_result($prod_list);	
-mysqli_free_result($loc_list);
 include_once "includes/footer.php";
 ?>

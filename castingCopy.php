@@ -44,8 +44,9 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 			$end_time = $row_title['end_time'];
 			if ($row_title['is_performance'] == 1){$type = "Performance";}
 		}
+		mysqli_free_result($result_title);
 	}
-
+	
 	//find list of uncast performances/rehearsals of this rehearsals production to populate the drop down select list.
 	$sql_copy_dest = "SELECT  re.re_id as new_re_id,
 				re.is_performance as is_performance,
@@ -168,7 +169,6 @@ if(isset($_POST["re_id"]) && !empty($_POST["re_id"]) && isset($_POST["new_re_id"
 			}		
 		}			
 	}
-	mysqli_close($conn);
 }
 ?>
 
@@ -191,6 +191,7 @@ if(isset($_POST["re_id"]) && !empty($_POST["re_id"]) && isset($_POST["new_re_id"
 						$option_string = $option_string . '</option>'; //close tag
 						echo $option_string;
 					}
+					mysqli_free_result($result_destinations);
 					?>
 				</select>
 				<span class="help-block"><?php echo $input_overbook_err;?></span>

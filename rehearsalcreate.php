@@ -99,8 +99,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         // Close statement
         mysqli_stmt_close($stmt);
     }
-    // Close connection
-    mysqli_close($conn);
+
 }
 include_once "includes/crudheader.php";
 ?>

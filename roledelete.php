@@ -15,12 +15,12 @@ if(isset($_POST["role_id"]) && !empty($_POST["role_id"])){
 	$conflict_result = mysqli_query($conn,$conflict_check);
 	$conflict_row = mysqli_fetch_array($conflict_result);
 	$conflict_role_id = $conflict_row['role_id1'];
-	mysqli_free_result($conflict_row);
+	mysqli_free_result($conflict_result);
 	
 	$casting_result = mysqli_query($conn,$casting_check);
 	$casting_row = mysqli_fetch_array($casting_result);
 	$casting_role_id = $casting_row['role_id'];
-	mysqli_free_result($cassting_row);
+	mysqli_free_result($casting_result);
 	
     $sql = "DELETE FROM roles WHERE role_id = ?";
     
@@ -51,8 +51,6 @@ if(isset($_POST["role_id"]) && !empty($_POST["role_id"])){
     // Close statement
     mysqli_stmt_close($stmt);
     
-    // Close connection
-    mysqli_close($conn);
 } else{
     // Check existence of id parameter
     if(empty(trim($_GET["role_id"]))){

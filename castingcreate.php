@@ -51,6 +51,7 @@ if((isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))) || $_SERVER["REQUEST_
 			$end_time = $row_title['end_time'];
 			if ($row_title['is_performance'] == 1){$type = "Performance";}
 		}
+		mysqli_free_result($result_title);
 	}
 }
 
@@ -207,8 +208,5 @@ include_once "includes/crudheader.php";
     </div>
 </div>
 <?php
- // Close connection
-mysqli_close($conn);
-
 include_once "includes/footer.php";
 ?>

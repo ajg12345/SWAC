@@ -137,7 +137,5 @@ $result = mysqli_query($conn, $sql);
 	
 
 <?php
-//close connection
-mysqli_close($conn);
 include_once "includes/footer.php";
 ?>

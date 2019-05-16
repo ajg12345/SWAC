@@ -47,9 +47,6 @@ include_once "includes/crudheader.php";
 					} else{
 						echo "ERROR: Could not able to execute $sql. " . mysqli_error($conn);
 					}
-
-					// Close connection
-					mysqli_close($conn);
 					?>
 				</div>	
 			</div>

@@ -27,8 +27,6 @@ if(isset($_POST["location_id"]) && !empty($_POST["location_id"])){
     // Close statement
     mysqli_stmt_close($stmt);
     
-    // Close connection
-    mysqli_close($conn);
 } else{
     // Check existence of id parameter
     if(empty(trim($_GET["location_id"]))){

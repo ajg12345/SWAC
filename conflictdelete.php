@@ -34,9 +34,7 @@ if(isset($_POST["conflict_pair_id"]) && !empty($_POST["conflict_pair_id"])){
      
     // Close statement
     mysqli_stmt_close($stmt);
-    
-    // Close connection
-    mysqli_close($conn);
+
 } else{
     // Check existence of id parameter
     if(empty(trim($_GET["conflict_pair_id"]))){

@@ -77,8 +77,6 @@ if(isset($_POST["dancer_id"]) && !empty($_POST["dancer_id"])){
         // Close statement
         mysqli_stmt_close($stmt);
     }
-    // Close connection
-    mysqli_close($conn);
 } else{
     // Check existence of id parameter before processing further
     if(isset($_GET["dancer_id"]) && !empty(trim($_GET["dancer_id"]))){
@@ -121,8 +119,6 @@ if(isset($_POST["dancer_id"]) && !empty($_POST["dancer_id"])){
         // Close statement
         mysqli_stmt_close($stmt);
         
-        // Close connection
-        mysqli_close($conn);
     }  else{
         // URL doesn't contain id parameter. Redirect to error page
         header("location: error.php#128");

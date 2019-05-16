@@ -61,8 +61,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         // Close statement
         mysqli_stmt_close($stmt);
     }
-    // Close connection
-    mysqli_close($conn);
 } else{
     // Check existence of id parameter before processing further
     if(isset($_GET["prod_id"]) && !empty(trim($_GET["prod_id"]))){
@@ -101,9 +99,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         
         // Close statement
         mysqli_stmt_close($stmt);
-        
-        // Close connection
-        mysqli_close($conn);
+
     }  else{
         // URL doesn't contain id parameter. Redirect to error page
         header("location: error.php");

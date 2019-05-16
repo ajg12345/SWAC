@@ -26,9 +26,7 @@ if(isset($_POST["re_id"]) && !empty($_POST["re_id"])){
      
     // Close statement
     mysqli_stmt_close($stmt);
-    
-    // Close connection
-    mysqli_close($conn);
+
 } else{
     // Check existence of id parameter
     if(empty(trim($_GET["re_id"]))){

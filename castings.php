@@ -45,6 +45,7 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 			if ($row_title['is_performance'] == 1){$type = "Performance";}
 		}
 	}
+	mysqli_free_result($result_title);
 	//add code to check the number of castings in this show, set $casting_count
 	$sql = "SELECT  
 			c.casting_id,
@@ -61,6 +62,7 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 	if($result = mysqli_query($conn, $sql)){
 		$casting_count = mysqli_num_rows($result) ;
 	}
+	mysqli_free_result($result);
 }
 ?>
 
@@ -117,9 +119,6 @@ if(isset($_GET["re_id"]) && !empty(trim($_GET["re_id"]))){
 					} else{
 							echo "<p>ERROR: missing valid rehearsal/performance id </p>";
 					}
-
-					// Close connection
-					mysqli_close($conn);
 					?>
 				</div>	
 			</div>

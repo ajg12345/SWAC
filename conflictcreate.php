@@ -19,15 +19,27 @@ if (isset($_GET["prod_id"]) && !empty(trim($_GET["prod_id"]))){
 	$prod_query = mysqli_query($conn, $sql_prod);
 	$prod_row = mysqli_fetch_array($prod_query);
 	$prod_desc = $prod_row['production'];
+	mysqli_free_result($prod_query);	
+	
 }
 
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 	
-    $input_role_id1 = trim($_POST["role_id1"]);
+	$input_role_id1 = trim($_POST["role_id1"]);
 	$input_role_id2 = trim($_POST["role_id2"]);
-	$input_prod_id = trim($_POST["prod_id"]);
-    if(strcmp($input_role_id1, input_role_id1) == 0){
+	$input_prod_id = trim($_POST["prod_id"]);	
+	$sql_roles = "select description, role_id as role_id from roles where prod_id=".$input_prod_id.";";
+	$roles_query = mysqli_query($conn, $sql_roles);
+	$roles_query2 = mysqli_query($conn, $sql_roles);
+	
+	$sql_prod = "select description as production from productions where prod_id=".$input_prod_id.";";
+	$prod_query = mysqli_query($conn, $sql_prod);
+	$prod_row = mysqli_fetch_array($prod_query);
+	$prod_desc = $prod_row['production'];
+	mysqli_free_result($prod_query);	
+	
+    if(strcmp($input_role_id1, $input_role_id2) == 0){
         $role_conflict_err = 'Roles to conflict cannot be the same.';
     }else{
         $role_id1 = $input_role_id1;
@@ -39,7 +51,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 	$next_pair_id = mysqli_query($conn, $sql_next_pair_id);
 	$next_pair_id_row = mysqli_fetch_array($next_pair_id);
 	$insert_pair_id = $next_pair_id_row['next_conflict_pair_id'];
-	mysqli_free_result($next_pair_id_row);	
+	mysqli_free_result($next_pair_id);	
     
     // Check input errors before inserting in database
     if(empty($role_conflict_err)){
@@ -80,9 +92,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         // Close statement
         mysqli_stmt_close($stmt);
     }
-    
-    // Close connection
-    mysqli_close($conn);
 }
 include_once "includes/crudheader.php";
 ?>
@@ -113,7 +122,7 @@ include_once "includes/crudheader.php";
 					while($roles_row2 = mysqli_fetch_array($roles_query2)){
 						echo '<option value="' . $roles_row2['role_id'] . '">' . $roles_row2['description'] . '</option>';
 					}
-					mysqli_free_result($roles_query);	
+					mysqli_free_result($roles_query2);	
 					?>
 				</select>
 				<span class="help-block"><?php echo $role_conflict_err;?></span>

@@ -160,8 +160,6 @@ if(isset($_POST["re_id"]) && !empty($_POST["re_id"])){
         // Close statement
         mysqli_stmt_close($stmt);
         
-        // Close connection
-        mysqli_close($conn);
     }  else{
         // URL doesn't contain id parameter. Redirect to error page
         header("location: error.php#128");

@@ -103,7 +103,5 @@ include_once 'includes/dbh.inc.php';
 	
 
 <?php
-//close connection
-mysqli_close($conn);
 include_once "includes/footer.php";
 ?>
